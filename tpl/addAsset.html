@@ -4,12 +4,19 @@
     <h1 class="title">添加资产</h1>
 </ion-header-bar>
 <ion-content>
-    <ion-list>
-        <ion-checkbox ">BTC-Bitcoin</ion-checkbox>
-        <ion-checkbox ">BTC-Bitcoin</ion-checkbox>
-        <ion-checkbox ">BTC-Bitcoin</ion-checkbox>
-        <ion-checkbox ">BTC-Bitcoin</ion-checkbox>
-    </ion-list>
+    <div class="content has-header">
+        <ul class="list">
+            <li class="item item-checkbox" ng-repeat="wallet in walletList" >
+                <label class="checkbox">
+                    <input type="checkbox" id="symbol-{{wallet.symbol}}" >
+                </label>
+                <div>
+                    <img style="float: right;height: 34px;" ng-src="http://p-dais.oss-cn-hangzhou.aliyuncs.com{{wallet.furl}}">
+                </div>
+                <div style="margin-top: 5px">{{wallet.fshortname}}-{{wallet.fname}}</div>
+            </li>
+        </ul>
+    </div>
 </ion-content>
 
 

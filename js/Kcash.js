@@ -145,25 +145,30 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             },1000);
     }])
     .controller('mainCtrl',['$scope','$timeout' ,'$http', function ($scope,$timeout,$http) {
-        $http({
-            method:'post',
-            url:url+'/virtualCoin/getCoinType',
-            data:{},
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            transformRequest: function (obj) {
-                return transformRequest(obj);
-            }
-        })
-        $scope.doRefresh = function() {
-            $http.get('item.json')   //注意改为自己本站的地址，不然会有跨域问题
-                .success(function(newWallet) {
-                    console.log("刷新了");
-                    $scope.walletList = newWallet;
-                })
-                .finally(function() {
-                    $scope.$broadcast('scroll.refreshComplete');
-                });
-        };
+          $scope.getWallet = function(){
+              $http({
+                  method:'post',
+                  url:url+'/virtualCoin/getWallet',
+                  data:{token:getCookie()},
+                  headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                  transformRequest: function (obj) {
+                      return transformRequest(obj);
+                }})
+               .success(function (result) {
+                  if(result.status == 200){
+                     $scope.walletList = result.data.walletList;
+                  }else{
+                      $scope.checkRequestStatus(result);
+                  }
+              })
+               .finally(function() {
+                  $scope.$broadcast('scroll.refreshComplete');
+              });
+          }
+           $scope.getWallet();
+            $scope.doRefresh = function() {
+               $scope.getWallet();
+            };
     }])
     .controller('signOutCtrl',['$scope','$ionicModal', function ($scope,$ionicModal) {
         //模态框
@@ -314,8 +319,39 @@ app.controller('registerCtrl',
     .controller('setSystemCtrl',['$scope', function ($scope) {
 
     }])
-    .controller('addAssetCtrl',['$scope', function ($scope) {
-        
+    .controller('addAssetCtrl',['$scope','$http', function ($scope,$http) {
+         $scope.getWalletCoinType = function(){
+              $http({
+                  method:'post',
+                  url:url+'/virtualCoin/getWalletCoinType',
+                  data:{token:getCookie()},
+                  headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                  transformRequest: function (obj) {
+                      return transformRequest(obj);
+                }})
+               .success(function (result) {
+                  if(result.status == 200){
+                     $scope.walletList = result.data;
+
+                  }else{
+                      $scope.checkRequestStatus(result);
+                  }
+              })
+               .finally(function() {
+                  $scope.$broadcast('scroll.refreshComplete');
+              });
+          }
+           $scope.checked = function(){
+             var data = $scope.walletList;
+             for (var i=0 ; i < data.length; i++){
+                  if(data[i].swithflag != "off"){
+                      $("#symbol-"+data[i].symbol).attr("checked","checked");
+                  }
+             }
+         }
+           $scope.getWalletCoinType();
+           setTimeout(function () { $scope.checked(); }, 300);
+
     }])
     .controller('transactionCtrl',['$scope','$http','$routeParams', function ($scope,$http,$routeParams) {
         //console.log($stateParams.id);

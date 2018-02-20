@@ -11,9 +11,9 @@
                 <ion-refresher pulling-text="下拉刷新" on-refresh="doRefresh()"></ion-refresher>
                 <div class="list">
                     <a href="#/myTransaction/{{wallet.fid}}" class="item item-avatar"ng-repeat="wallet in walletList">
-                        <img ng-src="../Kcash/imgSmall/{{wallet.img_sm}}">
+                        <img ng-src="http://p-dais.oss-cn-hangzhou.aliyuncs.com{{wallet.furl}}">
                         <span>{{wallet.fshortname}}</span>
-                        <span class="price">{{wallet.price}}</span>
+                        <span class="price">{{wallet.ftotal}}</span>
 
                     </a>
                 </div>
