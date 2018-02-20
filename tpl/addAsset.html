@@ -7,8 +7,8 @@
     <div class="content has-header">
         <ul class="list">
             <li class="item item-checkbox" ng-repeat="wallet in walletList" >
-                <label class="checkbox">
-                    <input type="checkbox" id="symbol-{{wallet.symbol}}" >
+                <label class="checkbox" >
+                    <input type="checkbox" id="symbol-{{wallet.symbol}}" value="{{wallet.swithflag}}" ng-click="checkCoinSwitch({{wallet.symbol}})">
                 </label>
                 <div>
                     <img style="float: right;height: 34px;" ng-src="http://p-dais.oss-cn-hangzhou.aliyuncs.com{{wallet.furl}}">

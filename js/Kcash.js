@@ -352,6 +352,37 @@ app.controller('registerCtrl',
            $scope.getWalletCoinType();
            setTimeout(function () { $scope.checked(); }, 300);
 
+           $scope.updateWallatOrAddress = function(_symbol,_type){
+                 $http({
+                     method:'post',
+                     url:url+'/virtualCoin/updateWallatOrAddress',
+                     data:{symbol:_symbol,type:_type,token:getCookie()},
+                     headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                     transformRequest: function (obj) {
+                         return transformRequest(obj);
+                   }})
+                  .success(function (result) {
+                     if(result.status != 200){
+                        $scope.checkRequestStatus(result);
+                     }
+                 })
+             }
+
+           $scope.checkCoinSwitch = function(symbol){
+               var flag = $("#symbol-"+symbol).val();
+               if(flag == 'no'){
+                    $("#symbol-"+symbol).attr("checked","checked");
+               }else if(flag == "off"){
+                    $("#symbol-"+symbol).val("open");
+                    $("#symbol-"+symbol).attr("checked","checked");
+                    $scope.updateWallatOrAddress(symbol,"open");
+               }else{
+                    $("#symbol-"+symbol).val("off");
+                    $("#symbol-"+symbol).removeAttr("checked");
+                    $scope.updateWallatOrAddress(symbol,"off");
+               }
+           }
+
     }])
     .controller('transactionCtrl',['$scope','$http','$routeParams', function ($scope,$http,$routeParams) {
         //console.log($stateParams.id);
