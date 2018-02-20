@@ -319,7 +319,6 @@ app.controller('registerCtrl',
     .controller('setSystemCtrl',['$scope', function ($scope) {
 
     }])
-    .controller('addAssetCtrl',['$scope', function ($scope) {
     .controller('addAssetCtrl',['$scope','$http', function ($scope,$http) {
          $scope.getWalletCoinType = function(){
               $http({
