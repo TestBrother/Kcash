@@ -1,0 +1,71 @@
+<!--<!DOCTYPE html>-->
+<!--<html ng-app="myApp">-->
+<!--<head lang="en">-->
+    <!--<meta charset="UTF-8">-->
+    <!--<title>index</title>-->
+    <!--<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"/>-->
+    <!--<link rel="stylesheet" href="../css/ionic.css"/>-->
+    <!--<link rel="stylesheet" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css"/>-->
+    <!--<link rel="stylesheet" href="../css/kcash.css"/>-->
+    <!--<script src="../js/ionic.bundle.js"></script>-->
+    <!--<script src="../js/Kcash.js"></script>-->
+<!--</head>-->
+<!--<body>-->
+    <ion-header-bar>
+        <i class="icon ion-chevron-left header_left" ng-click="backWard()"></i>
+        <h1 class="title">登录</h1>
+    </ion-header-bar>
+    <ion-content ng-controller="loginCtrl">
+        <div class="item item-input-inset">
+            <label class="item-input-wrapper">
+                <span>+86</span>
+                <input type="text" placeholder="请输入手机号码" ng-model="floginName">
+            </label>
+        </div>
+        <label class="item item-input">
+            <input type="password" placeholder="请输入密码" ng-model="floginPassword">
+        </label>
+        <button class="button button-block button-dark" ng-click="login()">
+            登录
+        </button>
+        <!--<p>未注册过的手机将自动创建为账号</p>-->
+        <input type="button" onclick="getCookie('user_token')" value="获取" />
+        <input type="button" onclick="setCookie('user_token','absghshdjs',3)" value="设置" />
+    </ion-content>
+
+    <script>
+        var app = angular.module('myApp', ['ionic']);
+
+
+        function setCookie(c_name,value,expiredays){
+            var exdate=new Date();
+            exdate.setDate(exdate.getDate()+expiredays);
+            document.cookie=c_name+ "=" +value+((expiredays==null) ? "" : "; expires="+exdate.toGMTString())
+        }
+        app.controller('loginCtrl',['$scope','$http', function ($scope,$http) {
+
+            //实现登录
+            $scope.login = function () {
+                $http({
+                    method:'post',
+                    url:url+'/user/login',
+                    data:{floginName:$scope.floginName,floginPassword:$scope.floginPassword},
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    transformRequest: function (obj) {
+                        var str = [];
+                        for (var p in obj) {
+                            str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+                        }
+                        return str.join("&");
+                    }
+                })
+                .success(function (result) {
+                    if(result.status == 200){
+                        setCookie('user_token',result.data,7);
+                    }
+                    console.log(result);
+                })
+            }
+        }])
+    </script>
+</body>

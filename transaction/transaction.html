@@ -1,0 +1,15 @@
+<ion-header-bar>
+    <i class="icon ion-chevron-left header_left" ng-click="backWard()"></i>
+    <h1 class="title"></h1>
+</ion-header-bar>
+<ion-content ng-controller="transactionCtrl">
+    <div class="text-center cent">
+        <img ng-src="../Kcash/imgSmall/{{wallet.img_sm}}">
+        <div><span>{{wallet.price}}</span>{{wallet.fshortname}}</div>
+    </div>
+    <div class="btn">
+        <button class="button icon-left  button-energized ion-arrow-up-a btn1">转账</button>
+        <button class="button icon-left  button-dark ion-arrow-down-a btn2">收款</button>
+    </div>
+    <div class="detail">交易记录</div>
+</ion-content>

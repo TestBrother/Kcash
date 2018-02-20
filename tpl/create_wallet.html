@@ -1,0 +1,19 @@
+    <ion-header-bar>
+        <i class="icon ion-chevron-left header_left" ng-click="backWard()"></i>
+        <h1 class="title">创建钱包</h1>
+    </ion-header-bar>
+    <ion-content ng-controller="createWalletCtrl">
+        <div>请输交易密码</div>
+        <label class="item item-input">
+            <input type="password" ng-model="tradepass">
+        </label>
+        <div>重复交易密码</div>
+        <label class="item item-input">
+            <input type="password" ng-model="tradepass2">
+        </label>
+        <button class="button button-block button-dark" ng-click="createWallet()">
+            确定
+        </button>
+    </ion-content>
+
+

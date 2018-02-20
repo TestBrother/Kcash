@@ -1,0 +1,47 @@
+<ion-side-menus>
+    <ion-side-menu-content>
+        <ion-header-bar class="bar-dark">
+            <button class="button icon ion-navicon" menu-toggle="left"></button>
+            <h1 class="title">总资产(BRL) <span>100.00</span></h1>
+
+        </ion-header-bar>
+        <!--各种币资产列表-->
+        <ion-pane>
+            <ion-content ng-controller="mainCtrl">
+                <ion-refresher pulling-text="下拉刷新" on-refresh="doRefresh()"></ion-refresher>
+                <div class="list">
+                    <a href="#/myTransaction/{{wallet.fid}}" class="item item-avatar"ng-repeat="wallet in walletList">
+                        <img ng-src="../Kcash/imgSmall/{{wallet.img_sm}}">
+                        <span>{{wallet.fshortname}}</span>
+                        <span class="price">{{wallet.price}}</span>
+
+                    </a>
+                </div>
+                <div class="addAsset" ng-click="jump('addAsset')"><i class="icon ion-plus-circled"></i>添加资产</div>
+            </ion-content>
+        </ion-pane>
+    </ion-side-menu-content>
+    <!-- 左边打开的侧边栏菜单-->
+    <ion-side-menu side="left">
+        <button menu-close class="button icon ion-close"></button>
+        <a class="rf button ion-android-contact" ng-click="jump('signOut')"></a>
+        <div class="list">
+            <a class="item item-icon-left" href="#" >
+                <i class="icon ion-iphone"></i>
+                钱包备份
+            </a>
+            <a class="item item-icon-left" href="#">
+                <i class="icon ion-key"></i>
+                导出密钥
+            </a>
+            <a class="item item-icon-left" href="#">
+                <i class="icon ion-ios-trash-outline"></i>
+                删除钱包
+            </a>
+            <a class="item item-icon-left"  ng-click="jump('setSystem')">
+                <i class="icon ion-ios-locked-outline"></i>
+                修改密码
+            </a>
+        </div>
+    </ion-side-menu>
+</ion-side-menus>
