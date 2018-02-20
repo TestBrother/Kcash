@@ -1,0 +1,26 @@
+    <ion-header-bar>
+        <i class="icon ion-chevron-left header_left" ng-click="backWard()"></i>
+        <h1 class="title">验证助记词</h1>
+    </ion-header-bar>
+    <ion-content ng-controller="validateMemwordsCtrl">
+        <div class="warn">
+            <p>验证你的钱包助记词</p>
+            请根据你记下的助记词，按照顺序点击，验证你备份的助记词正确无误。</div>
+        <!--将被选入的助记词-->
+        <div class="content-box">
+            <div class="mem_words" id="mem_words_div">
+
+            </div>
+        </div>
+        <!--候选助记词-->
+        <div >
+            <div class="mem_words">
+                <span ng-click="selectMemwords({{$index+1}})" id="{{$index+1}}" ng-repeat="data in memWordsArr track by $index">{{data}}</span>
+            </div>
+        </div>
+        <button class="button button-block button-dark" ng-click="confirmCreateWallet()">
+            确定
+        </button>
+    </ion-content>
+
+
