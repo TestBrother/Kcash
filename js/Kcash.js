@@ -3,6 +3,7 @@
  */
 var url = 'http://47.75.5.78:8081';
 var app = angular.module('kcash',['ionic']);
+var user_token = "user_token";
 /**
  * 配置状态
  */
@@ -53,11 +54,12 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             templateUrl:'transaction/transaction.html',
             controller:'transactionCtrl'
         })
-        .state('resetPassword',{
-            url:'myResetPassword',
-            templateUrl:'tpl/resetPassword.html',
-            controller:'resetPasswordCtrl'
-        });
+        .state('create_wallet',{
+                    url:'/createWallet',
+                    templateUrl:'tpl/create_wallet.html',
+                    controller:'createWalletCtrl'
+                })
+
         //.state('menu',{
         //    url:'',
         //    templateUrl:'',
@@ -95,7 +97,13 @@ app.config(function ($stateProvider, $urlRouterProvider) {
         };
         //判断当前用户是否登录
         //$rootScope.isLogin = false;
-
+        $scope.checkRequestStatus = function (result){
+            if(result.status == 403){
+                alert(result.msg);
+            }else if(result.status == 401){
+                $state.go("login");
+            }
+        };
     }])
     //起始页
     .controller('startCtrl',['$scope','$timeout','$interval','$state',
@@ -142,6 +150,26 @@ app.config(function ($stateProvider, $urlRouterProvider) {
     .controller('purseToolCtrl',['$scope', function ($scope) {
 
     }])
+    .controller('createWalletCtrl',['$scope','$http', function ($scope,$http) {
+         $scope.createWallet = function () {
+            $http({
+                method:'post',
+                url:url+'/user/createWallet',
+                data:{token:getCookie(),tradepass:$scope.tradepass,tradepass2:$scope.tradepass2},
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                transformRequest: function (obj) {
+                    return transformRequest(obj);
+                }
+            })
+            .success(function (result) {
+                if(result.status == 200){
+                    console.log(result)
+                }else{
+//                $scope.jump("login");
+                    $scope.checkRequestStatus(result);
+                }
+            })}
+        }])
     //注册
 app.controller('registerCtrl',
     ['$scope','$http', function ($scope,$http) {
@@ -153,7 +181,11 @@ app.controller('registerCtrl',
                 data: {phone:$scope.phone},
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                 transformRequest: function (obj) {
-                    return transformRequest(obj);
+                    var str = [];
+                    for (var p in obj) {
+                        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+                    }
+                    return str.join("&");
                 }
             })
                 .success(function (data) {
@@ -172,7 +204,11 @@ app.controller('registerCtrl',
                 data:{floginName:$scope.phone,floginPassword:$scope.floginPassword,authCode:$scope.authCode},
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                 transformRequest: function (obj) {
-                    return transformRequest(obj);
+                    var str = [];
+                    for (var p in obj) {
+                        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+                    }
+                    return str.join("&");
                 }
             })
                 .success(function (result) {
@@ -218,13 +254,11 @@ app.controller('registerCtrl',
                 $scope.walletList = data;
             })
 
-    }])
-    controller('changePassword',['$scope','$http', function ($scope, $http) {
-
     }]);
-
+    //模态框
 //Cookie存储token
-function getCookie(c_name){
+function getCookie(){
+    var c_name = user_token;
     if (document.cookie.length>0){
         var c_start=document.cookie.indexOf(c_name + "=");
         if (c_start!=-1){
@@ -244,13 +278,7 @@ function setCookie(c_name,value,expiredays){
     exdate.setDate(exdate.getDate()+expiredays);
     document.cookie=c_name+ "=" +value+((expiredays==null) ? "" : "; expires="+exdate.toGMTString())
 }
-function checkRequestStatus(result){
-    if(result.status == 403){
-        alert(result.msg);
-    }else if(result.status == 401){
-        //token无效，需要跳转到登录
-    }
-}
+
 //拼接
 function transformRequest(obj){
     var str = [];
