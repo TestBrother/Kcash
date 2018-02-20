@@ -55,15 +55,10 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             controller:'transactionCtrl'
         })
         .state('create_wallet',{
-            url:'/createWallet',
-            templateUrl:'tpl/create_wallet.html',
-            controller:'createWalletCtrl'
-        })
-          .state('validate_memwords',{
-            url:'/validateMemwords',
-            templateUrl:'tpl/validate_memwords.html',
-            controller:'validateMemwordsCtrl'
-         })
+                    url:'/createWallet',
+                    templateUrl:'tpl/create_wallet.html',
+                    controller:'createWalletCtrl'
+                })
 
         //.state('menu',{
         //    url:'',
@@ -90,7 +85,7 @@ app.config(function ($stateProvider, $urlRouterProvider) {
  * 声明控制器
  */
 .controller('parentCtrl',
-    ['$scope','$state', '$window','$ionicPopup',function ($scope,$state,$window,$ionicPopup) {
+    ['$scope','$state', '$window',function ($scope,$state,$window) {
         //跳转方法
         $scope.jump = function (arg) {
             $state.go(arg);
@@ -104,32 +99,11 @@ app.config(function ($stateProvider, $urlRouterProvider) {
         //$rootScope.isLogin = false;
         $scope.checkRequestStatus = function (result){
             if(result.status == 403){
-                $scope.showAlert(result.msg);
+                alert(result.msg);
             }else if(result.status == 401){
                 $state.go("login");
             }
         };
-
-       $scope.showConfirm = function(c_title,content,goPage) {
-         var confirmPopup = $ionicPopup.confirm({
-            title: c_title,
-            template: content
-          });
-          confirmPopup.then(function(res) {
-            if(res) {
-              $state.go(goPage);
-            } else {
-            }
-          });
-       };
-      $scope.showAlert = function(content) {
-        var alertPopup = $ionicPopup.alert({
-          title: '提示信息',
-          template: content
-        });
-        alertPopup.then(function(res) {
-        });
-      };
     }])
     //起始页
     .controller('startCtrl',['$scope','$timeout','$interval','$state',
@@ -176,7 +150,7 @@ app.config(function ($stateProvider, $urlRouterProvider) {
     .controller('purseToolCtrl',['$scope', function ($scope) {
 
     }])
-    .controller('createWalletCtrl',['$scope','$http', '$rootScope', function ($scope,$http,$rootScope) {
+    .controller('createWalletCtrl',['$scope','$http', function ($scope,$http) {
          $scope.createWallet = function () {
             $http({
                 method:'post',
@@ -189,55 +163,9 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             })
             .success(function (result) {
                 if(result.status == 200){
-                    var memWords = result.data;
-                    $rootScope.memWords = memWords;
-                    memWords = memWords.replace(/,/g ," ");
-                    $scope.showConfirm("助记词",memWords,"validate_memwords");
+                    console.log(result)
                 }else{
-                    $scope.checkRequestStatus(result);
-                }
-            })}
-        }])
-
-    .controller('validateMemwordsCtrl',['$scope','$http','$rootScope', function ($scope,$http,$rootScope) {
-        var memWords = $rootScope.memWords;
-        $rootScope.memWords = "";
-        if(typeof(memWords) != "undefined" && memWords != ""){
-            var tempArr = memWords.split(",");
-            tempArr.sort(function(){ return 0.5 - Math.random() })
-            $scope.memWordsArr = tempArr;
-        }
-
-        $scope.selectMemwords = function(value) {
-          if(typeof($("#"+value).attr("style")) == "undefined" || $("#"+value).attr("style") == ""){
-             $("#"+value).attr("style","background:#a07118");
-             $("#mem_words_div").append("<span style='background:#a07118' id="+value+"-a>"+$("#"+value).text()+"</span>");
-          }else{
-            $("#"+value).attr("style","");
-            $("#"+value+"-a").remove();
-          }
-      }
-
-         $scope.confirmCreateWallet = function () {
-            var spanObj = $("#mem_words_div").children();
-            var memWords = "";
-            for(var i = 0 ; i<spanObj.length ; i++){
-                memWords = memWords + $(spanObj[i]).text()+",";
-            }
-            memWords = memWords.substring(0,memWords.length-1);
-            $http({
-                method:'post',
-                url:url+'/user/confirmCreateWallet',
-                data:{token:getCookie(),memWords:memWords},
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                transformRequest: function (obj) {
-                    return transformRequest(obj);
-                }
-            })
-            .success(function (result) {
-                if(result.status == 200){
-                    $scope.showAlert("提示信息","创建成功","login");
-                }else{
+//                $scope.jump("login");
                     $scope.checkRequestStatus(result);
                 }
             })}
@@ -315,7 +243,7 @@ app.controller('registerCtrl',
 
     }])
     .controller('addAssetCtrl',['$scope', function ($scope) {
-        
+
     }])
     .controller('transactionCtrl',['$scope','$http','$routeParams', function ($scope,$http,$routeParams) {
         //console.log($stateParams.id);
