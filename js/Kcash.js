@@ -57,6 +57,35 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             url:'/validateMemwords',
             templateUrl:'tpl/validate_memwords.html',
          })
+        .state('changePassword',{
+            url:'/myChangePassword',
+            templateUrl:'tpl/changePassword.html'
+        })
+        .state('resetPassword',{
+            url:'/myResetPassword',
+            templateUrl:'tpl/resetPassword.html'
+        })
+        .state('setTradePassword',{
+            url:'/mySetTradePassword',
+            templateUrl:'tpl/setTradePassword.html'
+        })
+        .state('inputPassword',{
+            url:'/inputPassword',
+            templateUrl:'purseTool/inputPassword.html'
+
+        })
+        .state('keyInfo',{
+            url:'/myKeyInfo',
+            templateUrl:'purseTool/keyInfo.html'
+        })
+        .state('exportkey_next',{
+            url:'/exportkey_next',
+            templateUrl:'purseTool/exportkey_next.html'
+        })
+        .state('exportKey',{
+            url:'/exportKey',
+            templateUrl:'purseTool/exportKey.html'
+        })
 
         //.state('menu',{
         //    url:'',
@@ -638,27 +667,6 @@ app.controller('registerCtrl',
     }])
 
     .controller('transactionCtrl',['$scope','$http', function ($scope,$http) {
-        //console.log($stateParams.id);
-        //$http.get('item.json'+$routeParams.id)
-        //    .success(function (data) {
-        //        $scope.wallet = data[0];
-        //        console.log(data)
-        //        $scope.walletList = data;
-        //    })
-        $scope.detail = function () {
-            $http({
-                method:'post',
-                url:url+'/virtualCoin/getCoinType',
-                data:{token:getCookie(),id:$scope.fid,symbol:$scope.symbol,tradePassword:$scope.tradePassword},
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                transformRequest: function (obj) {
-                    return transformRequest(obj);
-                }
-            })
-                .success(function (result) {
-                    console.log(result);
-                })
-        }
 
     }]);
 //模态框
