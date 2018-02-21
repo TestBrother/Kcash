@@ -12,5 +12,15 @@
         <button class="button icon-left  button-dark ion-arrow-down-a btn2" ng-click="receive()">收款</button>
 
     </div>
-    <div class="detail">交易记录</div>
+        <div class="content">
+            <table border="1" ng-repeat="detail in tradeList">
+                <tbody>
+                <tr >
+                    <td>{{detail.fcreatetime}}</td>
+                    <td>{{datail.famount}}</td>
+                    <td>{{datail.fconfirmations}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
 </ion-content>
