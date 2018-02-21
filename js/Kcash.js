@@ -57,6 +57,35 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             url:'/validateMemwords',
             templateUrl:'tpl/validate_memwords.html',
          })
+        .state('changePassword',{
+            url:'/myChangePassword',
+            templateUrl:'tpl/changePassword.html'
+        })
+        .state('resetPassword',{
+            url:'/myResetPassword',
+            templateUrl:'tpl/resetPassword.html'
+        })
+        .state('setTradePassword',{
+            url:'/mySetTradePassword',
+            templateUrl:'tpl/setTradePassword.html'
+        })
+        .state('inputPassword',{
+            url:'/inputPassword',
+            templateUrl:'purseTool/inputPassword.html'
+
+        })
+        .state('keyInfo',{
+            url:'/myKeyInfo',
+            templateUrl:'purseTool/keyInfo.html'
+        })
+        .state('exportkey_next',{
+            url:'/exportkey_next',
+            templateUrl:'purseTool/exportkey_next.html'
+        })
+        .state('exportKey',{
+            url:'/exportKey',
+            templateUrl:'purseTool/exportKey.html'
+        })
 
         //.state('menu',{
         //    url:'',
@@ -507,6 +536,40 @@ app.controller('registerCtrl',
               })
           }
         }])
+         .controller('changePasswordCtrl',['$scope','$http', function ($scope,$http) {
+                //验证码
+                $scope.verification = function () {
+                    $http({
+                        method: 'post',
+                        url: 'http://47.75.5.78:8081/user/authCode',
+                        data: {phone:$scope.phone},
+                        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                        transformRequest: function (obj) {
+                            return transformRequest(obj);
+                        }
+                    })
+                        .success(function (data) {
+                            console.log(data);
+                            console.log('验证码'+data.data);
+                            $scope.verifica = data;
+
+                        })
+                }
+                $scope.changePassword = function () {
+                    $http({
+                        method:'post',
+                        url:'http://47.75.5.78:8081/user/changePassword',
+                        data:{token:getCookie(),oldPassword:$scope.oldPassword,newPassword:$scope.newPassword},
+                        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                        transformRequest: function (obj) {
+                            return transformRequest(obj);
+                        }
+                    })
+                        .success(function (result) {
+                            console.log(result);
+                        })
+                }
+            }])
     //导出输入密钥密码
     .controller('exportKeyCtrl',['$scope','$http', function ($scope,$http) {
         $scope.exportKey = function () {
