@@ -772,3 +772,27 @@ function transformRequest(obj){
     }
     return str.join("&");
 }
+
+
+function makeCode (boxId,content) {
+	new QRCode(document.getElementById(""+boxId), {
+    	width : 150,
+    	height : 150
+    }).makeCode(content);
+}
+function copyAddress(objId,textAreaId,msgDiv){
+  var text = $("#"+objId).val();
+  var input = document.getElementById(""+textAreaId);
+  input.value = text; // 修改文本框的内容
+  input.select(); // 选中文本
+  document.execCommand("copy"); // 执行浏览器复制命令
+  var secondNumber = 3;
+  setTimeout(function () {
+     $("#"+msgDiv).html("复制成功");
+     $("#"+msgDiv).show();
+  },3000);
+  setInterval(function () {
+      if(secondNumber>0)
+          secondNumber--;
+  },1000);
+}
