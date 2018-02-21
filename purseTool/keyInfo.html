@@ -1,29 +1,22 @@
-<!DOCTYPE html>
-<html ng-app="myApp">
-<head lang="en">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"/>
-    <link rel="stylesheet" href="../css/ionic.css"/>
-    <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css"/>
-    <link rel="stylesheet" href="../css/kcash.css"/>
-    <title>BTC密钥</title>
-    <script src="../js/ionic.bundle.js"></script>
-</head>
-<body>
+
 <ion-header-bar class="purseTool">
     <i class="icon ion-chevron-left header_left" ng-click="backWard()"></i>
     <h1 class="title">BTC密钥</h1>
 </ion-header-bar>
-<ion-content>
+<ion-content ng-controller="keyInfoCtrl">
     <div class="warn"><span>注意!</span>拥有私钥就能完全控制该地址的资产,不要分享给任何人。</div>
     <div>以下是 <span class="keyName">BTC</span>的地址和密钥,点击可复制</div>
     <ul class="keyinfo">
         <li><span>地址</span><div class="add">112g3hj12g31hj12ghj3gjh1</div></li>
         <li><span>密钥</span><div class="key">1hjkfhjdu78ji9865797655s</div></li>
     </ul>
+    <label class="item item-input">
+        <input type="text"  placeholder="请输入货币id" ng-model="symbol">
+    </label>
+    <label class="item item-input">
+        <input type="password" maxlength="6"  placeholder="请输入密码" ng-model="tradePassword">
+    </label>
+    <button class="button button-block button-dark" ng-click="keyInfo()">
+        确定
+    </button>
 </ion-content>
-<script>
-    var app = angular.module('myApp',['ionic']);
-</script>
-</body>
-</html>

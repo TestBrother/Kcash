@@ -4,6 +4,9 @@
 .lf {
   float: left;
 }
+.inlineblock{
+  display: inline-block;
+}
 ion-content {
   background: #eee;
   padding: 10px;
@@ -33,13 +36,16 @@ ion-header-bar .header_right {
   margin: 30px ;
 }
 .btn {
-  margin: 80px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
 }
 .btn .btn1 {
   float: left;
+  width: 50%;
 }
 .btn .btn2 {
-  float: right;
+  width: 50%;
 }
 .detail {
   float: left;
