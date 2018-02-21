@@ -10,11 +10,10 @@
             <ion-content ng-controller="mainCtrl">
                 <ion-refresher pulling-text="下拉刷新" on-refresh="doRefresh()"></ion-refresher>
                 <div class="list">
-                    <a href="#/myTransaction/{{wallet.fid}}" class="item item-avatar"ng-repeat="wallet in walletList">
+                    <a href="#/myTransaction?symbol={{wallet.fid}}" class="item item-avatar"ng-repeat="wallet in walletList">
                         <img ng-src="http://p-dais.oss-cn-hangzhou.aliyuncs.com{{wallet.furl}}">
                         <span>{{wallet.fshortname}}</span>
                         <span class="price">{{wallet.ftotal}}</span>
-
                     </a>
                 </div>
                 <div class="addAsset" ng-click="jump('addAsset')"><i class="icon ion-plus-circled"></i>添加资产</div>

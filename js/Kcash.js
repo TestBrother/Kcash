@@ -42,8 +42,12 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             templateUrl:'tpl/addAsset.html',
         })
         .state('transaction',{
-            url:'/myTransaction?id',
+            url:'/myTransaction?symbol',
             templateUrl:'transaction/transaction.html',
+        })
+        .state('transactionNext',{
+            url:'/transactionNext?symbol',
+            templateUrl:'transaction/transactionNext.html',
         })
         .state('create_wallet',{
             url:'/createWallet',
@@ -96,6 +100,8 @@ app.config(function ($stateProvider, $urlRouterProvider) {
                 $scope.showAlert(result.msg);
             }else if(result.status == 401){
                 $state.go("login");
+            }else if(result.status == 4012){
+                $state.go("start");
             }
         };
 
@@ -111,18 +117,19 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             }
           });
        };
-      $scope.showAlert = function(content) {
+      $scope.showAlert = function(content,goPage) {
         var alertPopup = $ionicPopup.alert({
           title: '提示信息',
           template: content
         });
         alertPopup.then(function(res) {
+             $state.go(goPage);
         });
       };
     }])
     //起始页
     .controller('startCtrl',['$scope','$timeout','$interval','$state',
-        function ($scope,$timeout,$interval,$state) {
+       /* function ($scope,$timeout,$interval,$state) {
             //定时
             $scope.secondNumber = 3;
             $timeout(function () {
@@ -132,7 +139,7 @@ app.config(function ($stateProvider, $urlRouterProvider) {
                 if($scope.secondNumber>0)
                     $scope.secondNumber--;
             },1000);
-    }])
+    }*/])
     .controller('mainCtrl',['$scope','$timeout' ,'$http', function ($scope,$timeout,$http) {
           $scope.getWallet = function(){
               $http({
@@ -186,7 +193,7 @@ app.config(function ($stateProvider, $urlRouterProvider) {
                     var memWords = result.data;
                     $rootScope.memWords = memWords;
                     memWords = memWords.replace(/,/g ," ");
-                    $scope.showConfirm("助记词",memWords,"validate_memwords");
+                    $scope.showConfirm("务必抄写助记词!",memWords,"validate_memwords");
                 }else{
                     $scope.checkRequestStatus(result);
                 }
@@ -230,7 +237,7 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             })
             .success(function (result) {
                 if(result.status == 200){
-                    $scope.showAlert("提示信息","创建成功","login");
+                    $scope.showAlert("创建成功","main");
                 }else{
                     $scope.checkRequestStatus(result);
                 }
@@ -287,7 +294,7 @@ app.controller('registerCtrl',
         $scope.login = function () {
             $http({
                 method:'post',
-                url:'http://47.75.5.78:8081/user/login',
+                url:url+'/user/login',
                 data:{floginName:$scope.floginName,floginPassword:$scope.floginPassword},
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                 transformRequest: function (obj) {
@@ -297,7 +304,7 @@ app.controller('registerCtrl',
                 .success(function (result) {
                     if(result.status == 200){
                         setCookie('user_token',result.data,7);
-                        console.log('succ')
+                        $scope.jump("start");
                     }else{
                         checkRequestStatus(result);
                     }
@@ -321,7 +328,6 @@ app.controller('registerCtrl',
                .success(function (result) {
                   if(result.status == 200){
                      $scope.walletList = result.data;
-
                   }else{
                       $scope.checkRequestStatus(result);
                   }
@@ -374,16 +380,52 @@ app.controller('registerCtrl',
 
     }])
     .controller('transactionCtrl',['$scope','$http','$stateParams', function ($scope,$http,$stateParams) {
-        console.log($stateParams.id);
-//        $http.get('item.json'+$routeParams.id)
-//            .success(function (data) {
-//                $scope.wallet = data[0];
-//                console.log(data)
-//                $scope.walletList = data;
-//            })
-
-    }]);
-    //模态框
+       var _symbol = $stateParams.symbol;
+       $scope.getCoinOperateDetail = function(){
+          $http({
+              method:'post',
+              url:url+'/virtualCoin/getCoinOperateDetail',
+              data:{token:getCookie(),currentPage:1,pageSize:10,status:-1,symbol:_symbol},
+              headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+              transformRequest: function (obj) {
+                  return transformRequest(obj);
+            }})
+           .success(function (result) {
+              if(result.status == 200){
+                 $scope.wallet = result.data;
+                  $scope.wallet.symbol = _symbol;
+                 $scope.tradeList = result.data.tradeList;
+              }else{
+                  $scope.checkRequestStatus(result);
+              }
+          })
+      }
+      $scope.getCoinOperateDetail();
+      $scope.transaction = function(symbol){
+        window.location.href="#/transactionNext?symbol="+ _symbol;
+      }
+    }])
+    .controller('transactionNextCtrl',['$scope','$http','$stateParams', function ($scope,$http,$stateParams) {
+           $scope.getOutBtcAddress = function(){
+              $http({
+                  method:'post',
+                  url:url+'/virtualCoin/getOutBtcAddress',
+                  data:{token:getCookie(),symbol:$stateParams.symbol},
+                  headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                  transformRequest: function (obj) {
+                      return transformRequest(obj);
+                }})
+               .success(function (result) {
+                  if(result.status == 200){
+                     $scope.wallet = result.data;
+                     $scope.tradeList = result.data.tradeList;
+                  }else{
+                      $scope.checkRequestStatus(result);
+                  }
+              })
+          }
+          $scope.getOutBtcAddress();
+        }]);
 //Cookie存储token
 function getCookie(){
     var c_name = user_token;
