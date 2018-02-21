@@ -340,7 +340,7 @@ app.controller('registerCtrl',
                 .success(function (result) {
                     if(result.status == 200){
                         setCookie('user_token',result.data,7);
-                        $scope.jump("start");
+                        $scope.jump("main");
                     }else{
                         checkRequestStatus(result);
                     }
@@ -442,11 +442,12 @@ app.controller('registerCtrl',
       }
     }])
     .controller('transactionNextCtrl',['$scope','$http','$stateParams', function ($scope,$http,$stateParams) {
+           var _symbol = $stateParams.symbol;
            $scope.getOutBtcAddress = function(){
               $http({
                   method:'post',
                   url:url+'/virtualCoin/getOutBtcAddress',
-                  data:{token:getCookie(),symbol:$stateParams.symbol},
+                  data:{token:getCookie(),symbol:_symbol},
                   headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                   transformRequest: function (obj) {
                       return transformRequest(obj);
@@ -454,6 +455,10 @@ app.controller('registerCtrl',
                .success(function (result) {
                   if(result.status == 200){
                      $scope.wallet = result.data;
+                     var temp = $scope.wallet.maxfees - $scope.wallet.minfees;
+                      $scope.wallet.middle1 = (parseFloat($scope.wallet.minfees) + temp/3).toFixed(5);
+                      $scope.wallet.middle2 = (parseFloat($scope.wallet.minfees) + temp/2).toFixed(5);
+                      setTimeout(function () { $("#selectfees").children("option").eq(0).remove(); }, 300);
                      $scope.tradeList = result.data.tradeList;
                   }else{
                       $scope.checkRequestStatus(result);
@@ -461,6 +466,50 @@ app.controller('registerCtrl',
               })
           }
           $scope.getOutBtcAddress();
+
+          $scope.withdrawBtc = function(){
+               var _tradepass = $scope.tradePassword;
+               var _withdrawAmount = $scope.withdrawAmount;
+               var _address = $scope.address;
+               var _fees = $scope.fees;
+               if(typeof(_address) == "undefined" || _address == ""){
+                  return $scope.showAlert("地址不能为空","",false);
+               }
+               if(typeof(_withdrawAmount) == "undefined" || _withdrawAmount == ""){
+                  return $scope.showAlert("数量不能为空","",false);
+               }
+               if(typeof(_tradepass) == "undefined" || _tradepass == ""){
+                  return $scope.showAlert("钱包密码不能为空","",false);
+               }
+               if(typeof(_fees) == "undefined" || _fees == ""){
+                  return $scope.showAlert("手续费不能为空","",false);
+               }
+                $http({
+                  method:'post',
+                  url:url+'/virtualCoin/withdrawBtc',
+                  data:{token:getCookie(),
+                        symbol:_symbol,
+                        address:_address,
+                        withdrawAmount:_withdrawAmount,
+                        tradePassword:_tradepass,
+                        fees:_fees
+                        },
+                  headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                  transformRequest: function (obj) {
+                      return transformRequest(obj);
+                }})
+               .success(function (result) {
+                  if(result.status == 200){
+                     $scope.wallet = result.data;
+                     var temp = $scope.wallet.maxfees - $scope.wallet.minfees;
+                      $scope.wallet.middle1 = (parseFloat($scope.wallet.minfees) + temp/3).toFixed(5);
+                      $scope.wallet.middle2 = (parseFloat($scope.wallet.minfees) + temp/2).toFixed(5);
+                     $scope.tradeList = result.data.tradeList;
+                  }else{
+                      $scope.checkRequestStatus(result);
+                  }
+              })
+          }
         }]);
 //Cookie存储token
 function getCookie(){

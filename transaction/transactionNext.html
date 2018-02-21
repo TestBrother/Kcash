@@ -12,20 +12,25 @@
         </label>
         <label class="item item-input">
             <span class="input-label">金额</span>
-            <input type="text" placeholder="请输入转账金额" ng-model="" />
+            <input type="text" placeholder="请输入转账金额" ng-model="withdrawAmount" />
+        </label>
+        <label class="item item-input">
+            <span class="input-label">密码</span>
+            <input type="password"  placeholder="请输入钱包密码" ng-model="tradePassword" />
         </label>
         <div class="list">
             <label class="item item-input item-select">
                 <div class="input-label">
                     手续费
                 </div>
-                <select>
-                    <option>Blue</option>
-                    <option selected>Green</option>
-                    <option>Red</option>
+                <select ng-model="fees" id="selectfees">
+                    <option  value="{{wallet.maxfees}}" selected="selected" >{{wallet.maxfees}}</option>
+                    <option value="{{wallet.middle2}}">{{wallet.middle2}}</option>
+                    <option value="{{wallet.middle1}}">{{wallet.middle1}}</option>
+                    <option value="{{wallet.minfees}}">{{wallet.minfees}}</option>
                 </select>
             </label>
         </div>
     </div>
-    <button class="button button-dark button-block">下一步</button>
+    <button class="button button-dark button-block" ng-click="withdrawBtc()">下一步</button>
 </ion-content>
