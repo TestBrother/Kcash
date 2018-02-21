@@ -78,9 +78,9 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             url:'/myKeyInfo',
             templateUrl:'purseTool/keyInfo.html'
         })
-        .state('/exportkey_next',{
-            url:'/exportkey_next',
-            templateUrl:'purseTool/exportkey_next.html'
+        .state('exportKey_next',{
+            url:'/exportKey_next',
+            templateUrl:'purseTool/exportKey_next.html'
         })
         .state('exportKey',{
             url:'/exportKey',
@@ -584,7 +584,7 @@ app.controller('registerCtrl',
             })
                 .success(function (result) {
                     if(result.status == 200){
-                        $scope.jump("exportkey_next");
+                        $scope.jump("exportKey_next");
                     }else{
                         $scope.checkRequestStatus(result);
                     }
