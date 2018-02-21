@@ -79,11 +79,11 @@ app.config(function ($stateProvider, $urlRouterProvider) {
 
         })
         .state('keyInfo',{
-            url:'/myKeyInfo',
+            url:'/myKeyInfo?symbol&tradePassword',
             templateUrl:'purseTool/keyInfo.html'
         })
         .state('exportKey_next',{
-            url:'/exportKey_next',
+            url:'/exportKey_next?tradePassword',
             templateUrl:'purseTool/exportKey_next.html'
         })
         .state('exportKey',{
@@ -572,28 +572,128 @@ app.controller('registerCtrl',
                             return transformRequest(obj);
                         }
                     })
-                        .success(function (data) {
-                            console.log(data);
-                            console.log('验证码'+data.data);
-                            $scope.verifica = data;
-
-                        })
-                }
-                $scope.changePassword = function () {
-                    $http({
-                        method:'post',
-                        url:'http://47.75.5.78:8081/user/changePassword',
-                        data:{token:getCookie(),oldPassword:$scope.oldPassword,newPassword:$scope.newPassword},
-                        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                        transformRequest: function (obj) {
-                            return transformRequest(obj);
-                        }
+            }
+            $scope.changePassword = function () {
+                $http({
+                    method:'post',
+                    url:'http://47.75.5.78:8081/user/changePassword',
+                    data:{token:getCookie(),oldPassword:$scope.oldPassword,newPassword:$scope.newPassword},
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    transformRequest: function (obj) {
+                        return transformRequest(obj);
+                    }
+                })
+                    .success(function (result) {
+                        console.log(result);
                     })
-                        .success(function (result) {
-                            console.log(result);
-                        })
+            }
+        }])
+
+    .controller('resetPasswordCtrl',['$scope','$http', function ($scope,$http) {
+        $scope.verification = function () {
+            $http({
+                method: 'post',
+                url: 'http://47.75.5.78:8081/user/authCode',
+                data: {phone:$scope.phone},
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                transformRequest: function (obj) {
+                    return transformRequest(obj);
                 }
-            }])
+            })
+                .success(function (data) {
+                    console.log(data);
+                    console.log('验证码'+data.data);
+                    $scope.verifica = data;
+
+                })
+        }
+        $scope.resetPassword = function () {
+            $http({
+                method:'post',
+                url:'http://47.75.5.78:8081/user/resetPassword',
+                data:{token:getCookie(),authCode:$scope.authCode,phone:$scope.phone,newPassword:$scope.newPassword,repeatPassword:$scope.repeatPassword },
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                transformRequest: function (obj) {
+                    return transformRequest(obj);
+                }
+            })
+                .success(function (result) {
+                    console.log(result);
+                })
+        }
+    }])
+    //设置交易密码接口
+    .controller('setTradePasswordCtrl',['$scope','$http', function ($scope,$http) {
+        $scope.setTradePassword = function () {
+            $http({
+                method:'post',
+                url:url+'/user/setTradePassword',
+                data:{token:getCookie(),tradePassword:$scope.tradePassword,repeatPassword:$scope.repeatPassword},
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                transformRequest: function (obj) {
+                    return transformRequest(obj);
+                }
+            })
+                .success(function (result) {
+                    console.log(result);
+                })
+        }
+    }])
+    //输入交易密码
+    .controller('inputPasswordCtrl',['$scope','$http','$state','$ionicPopup', function ($scope,$http,$state,$ionicPopup) {
+        $scope.inputPassword = function () {
+            $http({
+                method:'post',
+                url:url+'/user/vilidateTradePassword',
+                data:{token:getCookie(),tradePassword:$scope.tradePassword},
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                transformRequest: function (obj) {
+                    return transformRequest(obj);
+                }
+            })
+                .success(function (result) {
+                    console.log(result);
+                    //  confirm 对话框
+                    //$scope.showConfirm('重要提示','拥有钱包备份就能完全控制钱包' +
+                    //    '资产，因此强烈建议你在使用钱包之前做好备份，并将钱包备' +
+                    //    '份保存到安全的地方','backupsbox_next');
+                    if(result.status == 200){
+                        $scope.showConfirm('重要提示','拥有钱包备份就能完全控制钱包' +
+                            '资产，因此强烈建议你在使用钱包之前做好备份，并将钱包备' +
+                            '份保存到安全的地方','backupsbox_next');
+                    }else{
+                        $scope.checkRequestStatus(result);
+                    }
+                })
+        }
+    }])
+    //获取私钥
+    .controller('keyInfoCtrl',['$scope','$http','$stateParams', function ($scope,$http,$stateParams) {
+        var _symbol = $stateParams.symbol;
+        var _tradePassword = $stateParams.tradePassword;
+        console.log(_symbol+_tradePassword)
+        $scope.keyInfo = function () {
+            $http({
+                method:'post',
+                url:url+'/user/dumpPrivkey',
+                data:{token:getCookie(),symbol:_symbol,tradePassword:_tradePassword},
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                transformRequest: function (obj) {
+                    return transformRequest(obj);
+                }
+            })
+                .success(function (result) {
+                    if(result.status == 200){
+                        $scope.wallet = result.data;
+
+                    }
+                })
+        }
+        $scope.keyInfo();
+        //$scope.info = function(symbol){
+        //    window.location.href="#/transactionNext?symbol="+ _symbol;
+        //}
+    }])
     //导出输入密钥密码
     .controller('exportKeyCtrl',['$scope','$http', function ($scope,$http) {
         $scope.exportKey = function () {
@@ -608,7 +708,7 @@ app.controller('registerCtrl',
             })
                 .success(function (result) {
                     if(result.status == 200){
-                        $scope.jump("exportKey_next");
+                        window.location.href="#/exportKey_next?tradePassword="+$scope.tradePassword;
                     }else{
                         $scope.checkRequestStatus(result);
                     }
@@ -616,8 +716,9 @@ app.controller('registerCtrl',
         }
     }])
     //导出密钥
-    .controller('exportkeyNextCtrl',['$scope','$http', function ($scope,$http) {
-         $scope.getWallet = function(){
+    .controller('exportkeyNextCtrl',['$scope','$http','$stateParams', function ($scope,$http,$stateParams) {
+        $scope.password = $stateParams.tradePassword;
+        $scope.getWallet = function(){
               $http({
                   method:'post',
                   url:url+'/virtualCoin/getWallet',
@@ -670,29 +771,4 @@ function transformRequest(obj){
         str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
     }
     return str.join("&");
-}
-
-
-function makeCode (boxId,content) {
-	new QRCode(document.getElementById(""+boxId), {
-    	width : 150,
-    	height : 150
-    }).makeCode(content);
-}
-function copyAddress(objId,textAreaId,msgDiv){
-  var text = $("#"+objId).val();
-  var input = document.getElementById(""+textAreaId);
-  input.value = text; // 修改文本框的内容
-  input.select(); // 选中文本
-  document.execCommand("copy"); // 执行浏览器复制命令
-   $("#"+msgDiv).html("复制成功");
-   $("#"+msgDiv).show();
-  var secondNumber = 3;
-  setTimeout(function () {
-    $("#"+msgDiv).hide();
-  },3000);
-  setInterval(function () {
-      if(secondNumber>0)
-          secondNumber--;
-  },1000);
 }
