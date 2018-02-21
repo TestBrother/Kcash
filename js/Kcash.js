@@ -165,15 +165,6 @@ app.config(function ($stateProvider, $urlRouterProvider) {
     //起始页
     .controller('startCtrl',['$scope','$timeout','$interval','$state',
         function ($scope,$timeout,$interval,$state) {
-//            //定时
-//            $scope.secondNumber = 3;
-//            $timeout(function () {
-//                $state.go('main');
-//            },3000);
-//            $interval(function () {
-//                if($scope.secondNumber>0)
-//                    $scope.secondNumber--;
-//            },1000);
         $scope.importWallet = function(){
             $scope.jump("import_wallet");
         }
@@ -565,8 +556,8 @@ app.controller('registerCtrl',
                   })
               }
               $scope.getRecharge();
-              $scope.copyAddress = function(id,textAreaId){
-                copyAddress(id,textAreaId);
+              $scope.copyAddress = function(id,textAreaId,msgDiv){
+                copyAddress(id,textAreaId,msgDiv);
               }
             }])
          .controller('changePasswordCtrl',['$scope','$http', function ($scope,$http) {
@@ -688,11 +679,20 @@ function makeCode (boxId,content) {
     	height : 150
     }).makeCode(content);
 }
-function copyAddress(objId,textAreaId){
+function copyAddress(objId,textAreaId,msgDiv){
   var text = $("#"+objId).val();
   var input = document.getElementById(""+textAreaId);
   input.value = text; // 修改文本框的内容
   input.select(); // 选中文本
   document.execCommand("copy"); // 执行浏览器复制命令
-  alert("复制成功");
+   $("#"+msgDiv).html("复制成功");
+   $("#"+msgDiv).show();
+  var secondNumber = 3;
+  setTimeout(function () {
+    $("#"+msgDiv).hide();
+  },3000);
+  setInterval(function () {
+      if(secondNumber>0)
+          secondNumber--;
+  },1000);
 }
