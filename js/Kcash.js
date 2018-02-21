@@ -78,7 +78,7 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             url:'/myKeyInfo',
             templateUrl:'purseTool/keyInfo.html'
         })
-        .state('exportkey_next',{
+        .state('/exportkey_next',{
             url:'/exportkey_next',
             templateUrl:'purseTool/exportkey_next.html'
         })
@@ -585,16 +585,35 @@ app.controller('registerCtrl',
                 .success(function (result) {
                     if(result.status == 200){
                         $scope.jump("exportkey_next");
+                    }else{
+                        $scope.checkRequestStatus(result);
                     }
-                    //else{
-                    //    $scope.checkRequestStatus(result.msg);
-                    //}
                 })
         }
     }])
     //导出密钥
     .controller('exportkeyNextCtrl',['$scope','$http', function ($scope,$http) {
-
+         $scope.getWallet = function(){
+              $http({
+                  method:'post',
+                  url:url+'/virtualCoin/getWallet',
+                  data:{token:getCookie()},
+                  headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                  transformRequest: function (obj) {
+                      return transformRequest(obj);
+                }})
+               .success(function (result) {
+                  if(result.status == 200){
+                     $scope.walletList = result.data.walletList;
+                  }else{
+                      $scope.checkRequestStatus(result);
+                  }
+              })
+               .finally(function() {
+                  $scope.$broadcast('scroll.refreshComplete');
+              });
+          }
+           $scope.getWallet();
     }])
 //模态框
 //Cookie存储token
