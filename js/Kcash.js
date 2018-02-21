@@ -12,57 +12,46 @@ app.config(function ($stateProvider, $urlRouterProvider) {
         .state('start',{
             url:'/myStart',
             templateUrl:'tpl/start.html',
-            controller:'startCtrl'
         })
         .state('main',{
             url:'/myMain',
             templateUrl:'tpl/main.html',
-            controller:'mainCtrl'
         })
         .state('purseTool',{
             url:'/myPurseTool',
             templateUrl:'purseTool/purseTool.html',
-            controller:'purseToolCtrl'
         })
         .state('setSystem',{
             url:'/mySetSystem',
             templateUrl:'setSystem/setSystem.html',
-            controller:'setSystemCtrl'
         })
         .state('signOut',{
             url:'/mySignOut',
             templateUrl:'tpl/signOut.html',
-            controller:'signOutCtrl'
         })
         .state('register',{
             url:'/myRegister',
             templateUrl:'tpl/register.html',
-            controller:'registerCtrl'
         })
         .state('login',{
             url:'/myLogin',
             templateUrl:'tpl/login.html',
-            controller:'loginCtrl'
         })
         .state('addAsset',{
             url:'/myAddAsset',
             templateUrl:'tpl/addAsset.html',
-            controller:'addAssetCtrl'
         })
         .state('transaction',{
-            url:'/myTransaction/:id',
+            url:'/myTransaction?id',
             templateUrl:'transaction/transaction.html',
-            controller:'transactionCtrl'
         })
         .state('create_wallet',{
             url:'/createWallet',
             templateUrl:'tpl/create_wallet.html',
-            controller:'createWalletCtrl'
         })
           .state('validate_memwords',{
             url:'/validateMemwords',
             templateUrl:'tpl/validate_memwords.html',
-            controller:'validateMemwordsCtrl'
          })
 
         //.state('menu',{
@@ -384,14 +373,14 @@ app.controller('registerCtrl',
            }
 
     }])
-    .controller('transactionCtrl',['$scope','$http','$routeParams', function ($scope,$http,$routeParams) {
-        //console.log($stateParams.id);
-        $http.get('item.json'+$routeParams.id)
-            .success(function (data) {
-                $scope.wallet = data[0];
-                console.log(data)
-                $scope.walletList = data;
-            })
+    .controller('transactionCtrl',['$scope','$http','$stateParams', function ($scope,$http,$stateParams) {
+        console.log($stateParams.id);
+//        $http.get('item.json'+$routeParams.id)
+//            .success(function (data) {
+//                $scope.wallet = data[0];
+//                console.log(data)
+//                $scope.walletList = data;
+//            })
 
     }]);
     //模态框
