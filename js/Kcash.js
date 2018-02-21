@@ -609,7 +609,7 @@ app.controller('registerCtrl',
                   }
               })
           }
-        }]);
+        }])
     //导出输入密钥密码
     .controller('exportKeyCtrl',['$scope','$http', function ($scope,$http) {
         $scope.exportKey = function () {
