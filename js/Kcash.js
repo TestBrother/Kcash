@@ -42,72 +42,47 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             templateUrl:'tpl/addAsset.html'
         })
         .state('transaction',{
-            url:'/myTransaction/:id',
-            templateUrl:'transaction/transaction.html'
+            url:'/myTransaction?symbol',
+            templateUrl:'transaction/transaction.html',
+        })
+        .state('transactionNext',{
+            url:'/transactionNext?symbol',
+            templateUrl:'transaction/transactionNext.html',
         })
         .state('create_wallet',{
             url:'/createWallet',
-            templateUrl:'tpl/create_wallet.html'
+            templateUrl:'tpl/create_wallet.html',
         })
-        .state('validate_memwords',{
+          .state('validate_memwords',{
             url:'/validateMemwords',
-            templateUrl:'tpl/validate_memwords.html'
-        })
-        .state('changePassword',{
-            url:'/myChangePassword',
-            templateUrl:'tpl/changePassword.html'
-        })
-        .state('resetPassword',{
-            url:'/myResetPassword',
-            templateUrl:'tpl/resetPassword.html'
-        })
-        .state('setTradePassword',{
-            url:'/mySetTradePassword',
-            templateUrl:'tpl/setTradePassword.html'
-        })
-        .state('inputPassword',{
-            url:'/inputPassword',
-            templateUrl:'purseTool/inputPassword.html'
+            templateUrl:'tpl/validate_memwords.html',
+         })
 
-        })
-        .state('keyInfo',{
-            url:'/myKeyInfo',
-            templateUrl:'purseTool/keyInfo.html'
-        })
-        .state('exportkey_next',{
-            url:'/exportkey_next',
-            templateUrl:'purseTool/exportkey_next.html'
-        })
-        .state('exportKey',{
-            url:'/exportKey',
-            templateUrl:'purseTool/exportKey.html'
-        })
-
-    //.state('menu',{
-    //    url:'',
-    //    templateUrl:'',
-    //    controller:'menuCtrl'
-    //})
+        //.state('menu',{
+        //    url:'',
+        //    templateUrl:'',
+        //    controller:'menuCtrl'
+        //})
 
     $urlRouterProvider.otherwise('myMain');
 })
 /**
  * 刷新网页
  */
-    .run(function($ionicPlatform) {
-        $ionicPlatform.ready(function() {
-            if(window.cordova && window.cordova.plugins.Keyboard) {
-                cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-            }
-            if(window.StatusBar) {
-                StatusBar.styleDefault();
-            }
-        });
-    })
+.run(function($ionicPlatform) {
+    $ionicPlatform.ready(function() {
+        if(window.cordova && window.cordova.plugins.Keyboard) {
+            cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+        }
+        if(window.StatusBar) {
+            StatusBar.styleDefault();
+        }
+    });
+})
 /**
  * 声明控制器
  */
-    .controller('parentCtrl',
+.controller('parentCtrl',
     ['$scope','$state', '$window','$ionicPopup',function ($scope,$state,$window,$ionicPopup) {
         //跳转方法
         $scope.jump = function (arg) {
@@ -122,71 +97,79 @@ app.config(function ($stateProvider, $urlRouterProvider) {
         //$rootScope.isLogin = false;
         $scope.checkRequestStatus = function (result){
             if(result.status == 403){
-                $scope.showAlert(result.msg);
+                $scope.showAlert(result.msg,"",false);
             }else if(result.status == 401){
                 $state.go("login");
+            }else if(result.status == 4012){
+                $state.go("start");
             }
         };
-        //提示弹出框
-        $scope.showConfirm = function(c_title,content,goPage) {
-            var confirmPopup = $ionicPopup.confirm({
-                title: c_title,
-                template: content
-            });
-            confirmPopup.then(function(res) {
-                if(res) {
-                    $state.go(goPage);
-                } else {
-                }
-            });
-        };
-        $scope.showAlert = function(content) {
-            var alertPopup = $ionicPopup.alert({
-                title: '提示信息',
-                template: content
-            });
-            alertPopup.then(function(res) {
-            });
-        };
+
+       $scope.showConfirm = function(c_title,content,goPage) {
+         var confirmPopup = $ionicPopup.confirm({
+            title: c_title,
+            template: content
+          });
+          confirmPopup.then(function(res) {
+            if(res) {
+              $state.go(goPage);
+            } else {
+            }
+          });
+       };
+      $scope.showAlert = function(content,goPage,flag) {
+        var alertPopup = $ionicPopup.alert({
+          title: '提示信息',
+          template: content
+        });
+        alertPopup.then(function(res) {
+            if(flag){
+                $state.go(goPage);
+            }
+        });
+      };
     }])
     //起始页
     .controller('startCtrl',['$scope','$timeout','$interval','$state',
         function ($scope,$timeout,$interval,$state) {
-            //定时
-            $scope.secondNumber = 3;
-            $timeout(function () {
-                $state.go('main');
-            },3000);
-            $interval(function () {
-                if($scope.secondNumber>0)
-                    $scope.secondNumber--;
-            },1000);
-        }])
-    .controller('mainCtrl',['$scope','$timeout' ,'$http', function ($scope,$timeout,$http) {
-        $scope.getWallet = function(){
-            $http({
-                method:'post',
-                url:url+'/virtualCoin/getWallet',
-                data:{token:getCookie()},
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                transformRequest: function (obj) {
-                    return transformRequest(obj);
-                }})
-                .success(function (result) {
-                    if(result.status == 200){
-                        $scope.walletList = result.data.walletList;
-                    }else{
-                        $scope.checkRequestStatus(result);
-                    }
-                })
-                .finally(function() {
-                    $scope.$broadcast('scroll.refreshComplete');
-                });
+//            //定时
+//            $scope.secondNumber = 3;
+//            $timeout(function () {
+//                $state.go('main');
+//            },3000);
+//            $interval(function () {
+//                if($scope.secondNumber>0)
+//                    $scope.secondNumber--;
+//            },1000);
+        $scope.importWallet = function(){
+            $scope.jump("import_wallet");
         }
-        $scope.getWallet();
-        $scope.doRefresh = function() {
-            $scope.getWallet();
-        };
+    }])
+    .controller('mainCtrl',['$scope','$timeout' ,'$http', function ($scope,$timeout,$http) {
+          $scope.getWallet = function(){
+              $http({
+                  method:'post',
+                  url:url+'/virtualCoin/getWallet',
+                  data:{token:getCookie()},
+                  headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                  transformRequest: function (obj) {
+                      return transformRequest(obj);
+                }})
+               .success(function (result) {
+                  if(result.status == 200){
+                     $scope.walletList = result.data.walletList;
+                  }else{
+                      $scope.checkRequestStatus(result);
+                  }
+              })
+               .finally(function() {
+                  $scope.$broadcast('scroll.refreshComplete');
+              });
+          }
+           $scope.getWallet();
+            $scope.doRefresh = function() {
+               $scope.getWallet();
+            };
     }])
     .controller('signOutCtrl',['$scope','$ionicModal', function ($scope,$ionicModal) {
         //模态框
@@ -200,7 +183,7 @@ app.config(function ($stateProvider, $urlRouterProvider) {
 
     }])
     .controller('createWalletCtrl',['$scope','$http', '$rootScope', function ($scope,$http,$rootScope) {
-        $scope.createWallet = function () {
+         $scope.createWallet = function () {
             $http({
                 method:'post',
                 url:url+'/user/createWallet',
@@ -210,18 +193,45 @@ app.config(function ($stateProvider, $urlRouterProvider) {
                     return transformRequest(obj);
                 }
             })
-                .success(function (result) {
-                    if(result.status == 200){
-                        var memWords = result.data;
-                        $rootScope.memWords = memWords;
-                        memWords = memWords.replace(/,/g ," ");
-                        $scope.showConfirm("助记词",memWords,"validate_memwords");
-                    }else{
-                        $scope.checkRequestStatus(result);
-                    }
-                })}
-    }])
-
+            .success(function (result) {
+                if(result.status == 200){
+                    var memWords = result.data;
+                    $rootScope.memWords = memWords;
+                    memWords = memWords.replace(/,/g ," ");
+                    $scope.showConfirm("务必抄写助记词!",memWords,"validate_memwords");
+                }else{
+                    $scope.checkRequestStatus(result);
+                }
+            })}
+        }])
+     .controller('importWalletCtrl',['$scope','$http', function ($scope,$http) {
+         $scope.importWallet = function () {
+             var _tradepass = $scope.tradepass;
+             var _menWords = $scope.menWords;
+             if(typeof(_tradepass) == "undefined" || _tradepass == ""){
+                return $scope.showAlert("钱包密码不能为空","",false);
+             }
+             if(typeof(_menWords) == "undefined" || _menWords == ""){
+                return $scope.showAlert("助记词不能为空","",false);
+             }
+             _menWords = _menWords.replace(/\s+/g ,",");
+            $http({
+                method:'post',
+                url:url+'/user/importWalletByMemWords',
+                data:{token:getCookie(),tradepass:_tradepass,menWords:_menWords},
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                transformRequest: function (obj) {
+                    return transformRequest(obj);
+                }
+            })
+            .success(function (result) {
+                if(result.status == 200){
+                    return $scope.showAlert("导入成功","main",true);
+                }else{
+                    $scope.checkRequestStatus(result);
+                }
+            })}
+        }])
     .controller('validateMemwordsCtrl',['$scope','$http','$rootScope', function ($scope,$http,$rootScope) {
         var memWords = $rootScope.memWords;
         $rootScope.memWords = "";
@@ -232,16 +242,16 @@ app.config(function ($stateProvider, $urlRouterProvider) {
         }
 
         $scope.selectMemwords = function(value) {
-            if(typeof($("#"+value).attr("style")) == "undefined" || $("#"+value).attr("style") == ""){
-                $("#"+value).attr("style","background:#a07118");
-                $("#mem_words_div").append("<span style='background:#a07118' id="+value+"-a>"+$("#"+value).text()+"</span>");
-            }else{
-                $("#"+value).attr("style","");
-                $("#"+value+"-a").remove();
-            }
-        }
+          if(typeof($("#"+value).attr("style")) == "undefined" || $("#"+value).attr("style") == ""){
+             $("#"+value).attr("style","background:#a07118");
+             $("#mem_words_div").append("<span style='background:#a07118' id="+value+"-a>"+$("#"+value).text()+"</span>");
+          }else{
+            $("#"+value).attr("style","");
+            $("#"+value+"-a").remove();
+          }
+      }
 
-        $scope.confirmCreateWallet = function () {
+         $scope.confirmCreateWallet = function () {
             var spanObj = $("#mem_words_div").children();
             var memWords = "";
             for(var i = 0 ; i<spanObj.length ; i++){
@@ -257,15 +267,15 @@ app.config(function ($stateProvider, $urlRouterProvider) {
                     return transformRequest(obj);
                 }
             })
-                .success(function (result) {
-                    if(result.status == 200){
-                        $scope.showAlert("提示信息","创建成功","login");
-                    }else{
-                        $scope.checkRequestStatus(result);
-                    }
-                })}
-    }])
-//注册
+            .success(function (result) {
+                if(result.status == 200){
+                    $scope.showAlert("创建成功","main",true);
+                }else{
+                    $scope.checkRequestStatus(result);
+                }
+            })}
+        }])
+    //注册
 app.controller('registerCtrl',
     ['$scope','$http', function ($scope,$http) {
         //验证码
@@ -316,7 +326,7 @@ app.controller('registerCtrl',
         $scope.login = function () {
             $http({
                 method:'post',
-                url:'http://47.75.5.78:8081/user/login',
+                url:url+'/user/login',
                 data:{floginName:$scope.floginName,floginPassword:$scope.floginPassword},
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                 transformRequest: function (obj) {
@@ -326,7 +336,7 @@ app.controller('registerCtrl',
                 .success(function (result) {
                     if(result.status == 200){
                         setCookie('user_token',result.data,7);
-                        console.log('succ')
+                        $scope.jump("main");
                     }else{
                         checkRequestStatus(result);
                     }
@@ -338,68 +348,67 @@ app.controller('registerCtrl',
 
     }])
     .controller('addAssetCtrl',['$scope','$http', function ($scope,$http) {
-        $scope.getWalletCoinType = function(){
-            $http({
-                method:'post',
-                url:url+'/virtualCoin/getWalletCoinType',
-                data:{token:getCookie()},
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                transformRequest: function (obj) {
-                    return transformRequest(obj);
+         $scope.getWalletCoinType = function(){
+              $http({
+                  method:'post',
+                  url:url+'/virtualCoin/getWalletCoinType',
+                  data:{token:getCookie()},
+                  headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                  transformRequest: function (obj) {
+                      return transformRequest(obj);
                 }})
-                .success(function (result) {
-                    if(result.status == 200){
-                        $scope.walletList = result.data;
+               .success(function (result) {
+                  if(result.status == 200){
+                     $scope.walletList = result.data;
+                  }else{
+                      $scope.checkRequestStatus(result);
+                  }
+              })
+               .finally(function() {
+                  $scope.$broadcast('scroll.refreshComplete');
+              });
+          }
+           $scope.checked = function(){
+             var data = $scope.walletList;
+             for (var i=0 ; i < data.length; i++){
+                  if(data[i].swithflag != "off"){
+                      $("#symbol-"+data[i].symbol).attr("checked","checked");
+                  }
+             }
+         }
+           $scope.getWalletCoinType();
+           setTimeout(function () { $scope.checked(); }, 300);
 
-                    }else{
+           $scope.updateWallatOrAddress = function(_symbol,_type){
+                 $http({
+                     method:'post',
+                     url:url+'/virtualCoin/updateWallatOrAddress',
+                     data:{symbol:_symbol,type:_type,token:getCookie()},
+                     headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                     transformRequest: function (obj) {
+                         return transformRequest(obj);
+                   }})
+                  .success(function (result) {
+                     if(result.status != 200){
                         $scope.checkRequestStatus(result);
-                    }
-                })
-                .finally(function() {
-                    $scope.$broadcast('scroll.refreshComplete');
-                });
-        }
-        $scope.checked = function(){
-            var data = $scope.walletList;
-            for (var i=0 ; i < data.length; i++){
-                if(data[i].swithflag != "off"){
-                    $("#symbol-"+data[i].symbol).attr("checked","checked");
-                }
-            }
-        }
-        $scope.getWalletCoinType();
-        setTimeout(function () { $scope.checked(); }, 300);
+                     }
+                 })
+             }
 
-        $scope.updateWallatOrAddress = function(_symbol,_type){
-            $http({
-                method:'post',
-                url:url+'/virtualCoin/updateWallatOrAddress',
-                data:{symbol:_symbol,type:_type,token:getCookie()},
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                transformRequest: function (obj) {
-                    return transformRequest(obj);
-                }})
-                .success(function (result) {
-                    if(result.status != 200){
-                        $scope.checkRequestStatus(result);
-                    }
-                })
-        }
-
-        $scope.checkCoinSwitch = function(symbol){
-            var flag = $("#symbol-"+symbol).val();
-            if(flag == 'no'){
-                $("#symbol-"+symbol).attr("checked","checked");
-            }else if(flag == "off"){
-                $("#symbol-"+symbol).val("open");
-                $("#symbol-"+symbol).attr("checked","checked");
-                $scope.updateWallatOrAddress(symbol,"open");
-            }else{
-                $("#symbol-"+symbol).val("off");
-                $("#symbol-"+symbol).removeAttr("checked");
-                $scope.updateWallatOrAddress(symbol,"off");
-            }
-        }
+           $scope.checkCoinSwitch = function(symbol){
+               var flag = $("#symbol-"+symbol).val();
+               if(flag == 'no'){
+                    $("#symbol-"+symbol).attr("checked","checked");
+               }else if(flag == "off"){
+                    $("#symbol-"+symbol).val("open");
+                    $("#symbol-"+symbol).attr("checked","checked");
+                    $scope.updateWallatOrAddress(symbol,"open");
+               }else{
+                    $("#symbol-"+symbol).val("off");
+                    $("#symbol-"+symbol).removeAttr("checked");
+                    $scope.updateWallatOrAddress(symbol,"off");
+               }
+           }
 
     }])
     .controller('changePasswordCtrl',['$scope','$http', function ($scope,$http) {
@@ -531,6 +540,76 @@ app.controller('registerCtrl',
                 })
         }
     }])
+    .controller('transactionNextCtrl',['$scope','$http','$stateParams', function ($scope,$http,$stateParams) {
+           var _symbol = $stateParams.symbol;
+           $scope.getOutBtcAddress = function(){
+              $http({
+                  method:'post',
+                  url:url+'/virtualCoin/getOutBtcAddress',
+                  data:{token:getCookie(),symbol:_symbol},
+                  headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                  transformRequest: function (obj) {
+                      return transformRequest(obj);
+                }})
+               .success(function (result) {
+                  if(result.status == 200){
+                     $scope.wallet = result.data;
+                     var temp = $scope.wallet.maxfees - $scope.wallet.minfees;
+                      $scope.wallet.middle1 = (parseFloat($scope.wallet.minfees) + temp/3).toFixed(5);
+                      $scope.wallet.middle2 = (parseFloat($scope.wallet.minfees) + temp/2).toFixed(5);
+                      setTimeout(function () { $("#selectfees").children("option").eq(0).remove(); }, 300);
+                     $scope.tradeList = result.data.tradeList;
+                  }else{
+                      $scope.checkRequestStatus(result);
+                  }
+              })
+          }
+          $scope.getOutBtcAddress();
+
+          $scope.withdrawBtc = function(){
+               var _tradepass = $scope.tradePassword;
+               var _withdrawAmount = $scope.withdrawAmount;
+               var _address = $scope.address;
+               var _fees = $scope.fees;
+               if(typeof(_address) == "undefined" || _address == ""){
+                  return $scope.showAlert("地址不能为空","",false);
+               }
+               if(typeof(_withdrawAmount) == "undefined" || _withdrawAmount == ""){
+                  return $scope.showAlert("数量不能为空","",false);
+               }
+               if(typeof(_tradepass) == "undefined" || _tradepass == ""){
+                  return $scope.showAlert("钱包密码不能为空","",false);
+               }
+               if(typeof(_fees) == "undefined" || _fees == ""){
+                  return $scope.showAlert("手续费不能为空","",false);
+               }
+                $http({
+                  method:'post',
+                  url:url+'/virtualCoin/withdrawBtc',
+                  data:{token:getCookie(),
+                        symbol:_symbol,
+                        address:_address,
+                        withdrawAmount:_withdrawAmount,
+                        tradePassword:_tradepass,
+                        fees:_fees
+                        },
+                  headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                  transformRequest: function (obj) {
+                      return transformRequest(obj);
+                }})
+               .success(function (result) {
+                  if(result.status == 200){
+                     $scope.wallet = result.data;
+                     var temp = $scope.wallet.maxfees - $scope.wallet.minfees;
+                      $scope.wallet.middle1 = (parseFloat($scope.wallet.minfees) + temp/3).toFixed(5);
+                      $scope.wallet.middle2 = (parseFloat($scope.wallet.minfees) + temp/2).toFixed(5);
+                     $scope.tradeList = result.data.tradeList;
+                  }else{
+                      $scope.checkRequestStatus(result);
+                  }
+              })
+          }
+        }])
     //导出输入密钥密码
     .controller('exportKeyCtrl',['$scope','$http', function ($scope,$http) {
         $scope.exportKey = function () {
@@ -605,6 +684,7 @@ function setCookie(c_name,value,expiredays){
     exdate.setDate(exdate.getDate()+expiredays);
     document.cookie=c_name+ "=" +value+((expiredays==null) ? "" : "; expires="+exdate.toGMTString())
 }
+
 //拼接
 function transformRequest(obj){
     var str = [];
