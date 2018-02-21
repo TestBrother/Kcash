@@ -1,0 +1,19 @@
+    <ion-header-bar>
+        <i class="icon ion-chevron-left header_left" ng-click="backWard()"></i>
+        <h1 class="title">导入钱包</h1>
+    </ion-header-bar>
+    <ion-content ng-controller="importWalletCtrl">
+        <div>请输入钱包密码</div>
+        <label class="item item-input">
+            <input type="password" ng-model="tradepass" />
+        </label><p/>
+        <div>请输入助记词(<span style="color:red">以空格分开</span>)</div>
+        <label class="item item-input">
+            <textarea style="height:70px"  ng-model="menWords" />
+        </label>
+        <button class="button button-block button-dark" ng-click="importWallet()">
+            确定
+        </button>
+    </ion-content>
+
+

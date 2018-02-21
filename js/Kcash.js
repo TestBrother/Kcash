@@ -53,6 +53,10 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             url:'/createWallet',
             templateUrl:'tpl/create_wallet.html',
         })
+        .state('import_wallet',{
+            url:'/importWallet',
+            templateUrl:'tpl/import_wallet.html',
+        })
           .state('validate_memwords',{
             url:'/validateMemwords',
             templateUrl:'tpl/validate_memwords.html',
@@ -97,7 +101,7 @@ app.config(function ($stateProvider, $urlRouterProvider) {
         //$rootScope.isLogin = false;
         $scope.checkRequestStatus = function (result){
             if(result.status == 403){
-                $scope.showAlert(result.msg);
+                $scope.showAlert(result.msg,"",false);
             }else if(result.status == 401){
                 $state.go("login");
             }else if(result.status == 4012){
@@ -117,29 +121,34 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             }
           });
        };
-      $scope.showAlert = function(content,goPage) {
+      $scope.showAlert = function(content,goPage,flag) {
         var alertPopup = $ionicPopup.alert({
           title: '提示信息',
           template: content
         });
         alertPopup.then(function(res) {
-             $state.go(goPage);
+            if(flag){
+                $state.go(goPage);
+            }
         });
       };
     }])
     //起始页
     .controller('startCtrl',['$scope','$timeout','$interval','$state',
-       /* function ($scope,$timeout,$interval,$state) {
-            //定时
-            $scope.secondNumber = 3;
-            $timeout(function () {
-                $state.go('main');
-            },3000);
-            $interval(function () {
-                if($scope.secondNumber>0)
-                    $scope.secondNumber--;
-            },1000);
-    }*/])
+        function ($scope,$timeout,$interval,$state) {
+//            //定时
+//            $scope.secondNumber = 3;
+//            $timeout(function () {
+//                $state.go('main');
+//            },3000);
+//            $interval(function () {
+//                if($scope.secondNumber>0)
+//                    $scope.secondNumber--;
+//            },1000);
+        $scope.importWallet = function(){
+            $scope.jump("import_wallet");
+        }
+    }])
     .controller('mainCtrl',['$scope','$timeout' ,'$http', function ($scope,$timeout,$http) {
           $scope.getWallet = function(){
               $http({
@@ -199,7 +208,34 @@ app.config(function ($stateProvider, $urlRouterProvider) {
                 }
             })}
         }])
-
+     .controller('importWalletCtrl',['$scope','$http', function ($scope,$http) {
+         $scope.importWallet = function () {
+             var _tradepass = $scope.tradepass;
+             var _menWords = $scope.menWords;
+             if(typeof(_tradepass) == "undefined" || _tradepass == ""){
+                return $scope.showAlert("钱包密码不能为空","",false);
+             }
+             if(typeof(_menWords) == "undefined" || _menWords == ""){
+                return $scope.showAlert("助记词不能为空","",false);
+             }
+             _menWords = _menWords.replace(/\s+/g ,",");
+            $http({
+                method:'post',
+                url:url+'/user/importWalletByMemWords',
+                data:{token:getCookie(),tradepass:_tradepass,menWords:_menWords},
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                transformRequest: function (obj) {
+                    return transformRequest(obj);
+                }
+            })
+            .success(function (result) {
+                if(result.status == 200){
+                    return $scope.showAlert("导入成功","main",true);
+                }else{
+                    $scope.checkRequestStatus(result);
+                }
+            })}
+        }])
     .controller('validateMemwordsCtrl',['$scope','$http','$rootScope', function ($scope,$http,$rootScope) {
         var memWords = $rootScope.memWords;
         $rootScope.memWords = "";
@@ -237,7 +273,7 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             })
             .success(function (result) {
                 if(result.status == 200){
-                    $scope.showAlert("创建成功","main");
+                    $scope.showAlert("创建成功","main",true);
                 }else{
                     $scope.checkRequestStatus(result);
                 }
