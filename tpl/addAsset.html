@@ -3,7 +3,7 @@
     <i class="icon ion-chevron-left header_left" ng-click="backWard()"></i>
     <h1 class="title">添加资产</h1>
 </ion-header-bar>
-<ion-content>
+<ion-content ng-controller="addAssetCtrl">
     <div class="content has-header">
         <ul class="list">
             <li class="item item-checkbox" ng-repeat="wallet in walletList" >
