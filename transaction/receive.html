@@ -1,0 +1,10 @@
+<ion-header-bar>
+    <i class="icon ion-chevron-left header_left" ng-click="backWard()"></i>
+    <h1 class="title">收款</h1>
+</ion-header-bar>
+<ion-content ng-controller="receiveCtrl">
+    <div style="margin-left: 28%;padding-top: 50px;padding-bottom: 50px" id="qrcodeDiv" ng-click="copyAddress('addressInput','contentTextarea')"></div>
+    <div style="padding-bottom: 14px;margin-left: 29%;">点击二维码复制地址</div>
+    <input type="text" id="addressInput" style="width:100%;padding-left: 3px;" class="item input" disabled="disabled" value="{{receive}}">
+    <textarea id="contentTextarea" style="opacity: 0;"></textarea>
+</ion-content>

@@ -49,6 +49,10 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             url:'/transactionNext?symbol',
             templateUrl:'transaction/transactionNext.html',
         })
+        .state('receive',{
+            url:'/receive?symbol',
+            templateUrl:'transaction/receive.html',
+        })
         .state('create_wallet',{
             url:'/createWallet',
             templateUrl:'tpl/create_wallet.html',
@@ -462,9 +466,12 @@ app.controller('registerCtrl',
           })
       }
       $scope.getCoinOperateDetail();
-      $scope.transaction = function(symbol){
+      $scope.transaction = function(){
         window.location.href="#/transactionNext?symbol="+ _symbol;
       }
+      $scope.receive = function(){
+          window.location.href="#/receive?symbol="+ _symbol;
+        }
     }])
     .controller('transactionNextCtrl',['$scope','$http','$stateParams', function ($scope,$http,$stateParams) {
            var _symbol = $stateParams.symbol;
@@ -536,6 +543,32 @@ app.controller('registerCtrl',
               })
           }
         }])
+
+        .controller('receiveCtrl',['$scope','$http','$stateParams', function ($scope,$http,$stateParams) {
+               var _symbol = $stateParams.symbol;
+               $scope.getRecharge = function(){
+                  $http({
+                      method:'post',
+                      url:url+'/virtualCoin/recharge',
+                      data:{token:getCookie(),symbol:_symbol},
+                      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                      transformRequest: function (obj) {
+                          return transformRequest(obj);
+                    }})
+                   .success(function (result) {
+                      if(result.status == 200){
+                         $scope.receive = result.data;
+                         makeCode("qrcodeDiv",result.data);
+                      }else{
+                          $scope.checkRequestStatus(result);
+                      }
+                  })
+              }
+              $scope.getRecharge();
+              $scope.copyAddress = function(id,textAreaId){
+                copyAddress(id,textAreaId);
+              }
+            }])
          .controller('changePasswordCtrl',['$scope','$http', function ($scope,$http) {
                 //验证码
                 $scope.verification = function () {
@@ -646,4 +679,20 @@ function transformRequest(obj){
         str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
     }
     return str.join("&");
+}
+
+
+function makeCode (boxId,content) {
+	new QRCode(document.getElementById(""+boxId), {
+    	width : 150,
+    	height : 150
+    }).makeCode(content);
+}
+function copyAddress(objId,textAreaId){
+  var text = $("#"+objId).val();
+  var input = document.getElementById(""+textAreaId);
+  input.value = text; // 修改文本框的内容
+  input.select(); // 选中文本
+  document.execCommand("copy"); // 执行浏览器复制命令
+  alert("复制成功");
 }
