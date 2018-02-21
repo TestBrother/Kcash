@@ -5,7 +5,7 @@
 </ion-header-bar>
 <ion-content ng-controller="exportkeyNextCtrl">
     <div class="list">
-        <a href="#/myTransaction?symbol={{wallet.fid}}" class="item item-avatar"  ng-repeat="wallet in walletList">
+        <a href="#/myKeyInfo/{{wallet.fid}}" class="item item-avatar"  ng-repeat="wallet in walletList">
             <img  ng-src="http://p-dais.oss-cn-hangzhou.aliyuncs.com{{wallet.furl}}">
             <h2 class="inlineblock">{{wallet.fshortname}}</h2>
             <span class="rf">&gt;</span>
