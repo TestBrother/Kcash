@@ -444,7 +444,7 @@ app.controller('registerCtrl',
               if(result.status == 200){
                  $scope.wallet = result.data;
                   $scope.wallet.symbol = _symbol;
-                 $scope.tradeList = result.data.tradeList;
+                 $scope.operationList = result.data.tradeList;
               }else{
                   $scope.checkRequestStatus(result);
               }
@@ -517,11 +517,7 @@ app.controller('registerCtrl',
                 }})
                .success(function (result) {
                   if(result.status == 200){
-                     $scope.wallet = result.data;
-                     var temp = $scope.wallet.maxfees - $scope.wallet.minfees;
-                      $scope.wallet.middle1 = (parseFloat($scope.wallet.minfees) + temp/3).toFixed(5);
-                      $scope.wallet.middle2 = (parseFloat($scope.wallet.minfees) + temp/2).toFixed(5);
-                     $scope.tradeList = result.data.tradeList;
+                     $scope.showAlert("转账成功","main",true);
                   }else{
                       $scope.checkRequestStatus(result);
                   }

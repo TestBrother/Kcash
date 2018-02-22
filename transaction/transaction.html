@@ -9,7 +9,19 @@
             <div class="kDetail"><span>{{wallet.ftotal}}</span>{{wallet.walletName}}</div>
         </div>
 
-        <div class="detail">交易记录</div>
+    </div>
+        <div class="content">
+            <table style="width:100%" border="1" ng-repeat="operation in operationList">
+                <tbody>
+                <tr style="border-bottom: 1px solid #2f2e295c;">
+                    <td>{{operation.fcreatetime | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+                    <td>{{operation.famount>0 ? operation.famount : -operation.famount}} {{wallet.walletName}}</td>
+                    <td>{{operation.fconfirmations}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+</ion-content>        <div class="detail">交易记录</div>
     </ion-content>
     <ion-footer-bar>
         <div class="btn bar bar-footer">
