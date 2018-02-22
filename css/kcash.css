@@ -47,8 +47,17 @@ ion-header-bar .header_right {
 .btn .btn2 {
   width: 50%;
 }
+.btn button{
+  border-radius: 0px;
+  padding: 0px 20%;
+}
+.kDetail span{
+  font-size: 22px;
+  margin: 10px;
+}
 .detail {
-  float: left;
+  border-top: 2px solid #cccccc;
+  padding: 10px;
 }
 .warn {
   font-size: 12px;

@@ -26,7 +26,7 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             templateUrl:'setSystem/setSystem.html'
         })
         .state('signOut',{
-            url:'/mySignOut',
+            url:'/mysignOut',
             templateUrl:'tpl/signOut.html'
         })
         .state('register',{
@@ -90,12 +90,6 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             url:'/exportKey',
             templateUrl:'purseTool/exportKey.html'
         })
-
-        //.state('menu',{
-        //    url:'',
-        //    templateUrl:'',
-        //    controller:'menuCtrl'
-        //})
 
     $urlRouterProvider.otherwise('myMain');
 })
@@ -329,7 +323,7 @@ app.controller('registerCtrl',
         $scope.register = function () {
             $http({
                 method:'post',
-                url:'http://47.75.5.78:8081/user/register',
+                url:url+'/user/register',
                 data:{floginName:$scope.phone,floginPassword:$scope.floginPassword,authCode:$scope.authCode},
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                 transformRequest: function (obj) {
@@ -565,7 +559,7 @@ app.controller('registerCtrl',
                 $scope.verification = function () {
                     $http({
                         method: 'post',
-                        url: 'http://47.75.5.78:8081/user/authCode',
+                        url:url+'/user/authCode',
                         data: {phone:$scope.phone},
                         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                         transformRequest: function (obj) {
@@ -576,7 +570,7 @@ app.controller('registerCtrl',
             $scope.changePassword = function () {
                 $http({
                     method:'post',
-                    url:'http://47.75.5.78:8081/user/changePassword',
+                    url:url+'/user/changePassword',
                     data:{token:getCookie(),oldPassword:$scope.oldPassword,newPassword:$scope.newPassword},
                     headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                     transformRequest: function (obj) {
@@ -585,6 +579,9 @@ app.controller('registerCtrl',
                 })
                     .success(function (result) {
                         console.log(result);
+                        if(result.status == 200){
+                            $scope.backWard();
+                        }
                     })
             }
         }])
@@ -593,7 +590,7 @@ app.controller('registerCtrl',
         $scope.verification = function () {
             $http({
                 method: 'post',
-                url: 'http://47.75.5.78:8081/user/authCode',
+                url: url+'/user/authCode',
                 data: {phone:$scope.phone},
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                 transformRequest: function (obj) {
@@ -610,7 +607,7 @@ app.controller('registerCtrl',
         $scope.resetPassword = function () {
             $http({
                 method:'post',
-                url:'http://47.75.5.78:8081/user/resetPassword',
+                url:url+'/user/resetPassword',
                 data:{token:getCookie(),authCode:$scope.authCode,phone:$scope.phone,newPassword:$scope.newPassword,repeatPassword:$scope.repeatPassword },
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                 transformRequest: function (obj) {
@@ -685,7 +682,6 @@ app.controller('registerCtrl',
                 .success(function (result) {
                     if(result.status == 200){
                         $scope.wallet = result.data;
-
                     }
                 })
         }
@@ -740,7 +736,7 @@ app.controller('registerCtrl',
           }
            $scope.getWallet();
     }])
-//模态框
+
 //Cookie存储token
 function getCookie(){
     var c_name = user_token;

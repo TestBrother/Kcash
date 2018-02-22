@@ -1,16 +1,20 @@
-<ion-header-bar>
-    <i class="icon ion-chevron-left header_left" ng-click="backWard()"></i>
-    <h1 class="title"></h1>
-</ion-header-bar>
-<ion-content ng-controller="transactionCtrl">
-    <div class="text-center cent">
-        <img ng-src="http://p-dais.oss-cn-hangzhou.aliyuncs.com{{wallet.coinLogo}}">
-        <div><span>{{wallet.ftotal}}</span>{{wallet.walletName}}</div>
-    </div>
-    <div class="btn">
-        <button class="button icon-left  button-energized ion-arrow-up-a btn1" ng-click="transaction()">转账</button>
-        <button class="button icon-left  button-dark ion-arrow-down-a btn2" ng-click="receive()">收款</button>
+<div  ng-controller="transactionCtrl">
+    <ion-header-bar>
+        <i class="icon ion-chevron-left header_left" ng-click="backWard()"></i>
+        <h1 class="title"></h1>
+    </ion-header-bar>
+    <ion-content>
+        <div class="text-center cent">
+            <img ng-src="http://p-dais.oss-cn-hangzhou.aliyuncs.com{{wallet.coinLogo}}">
+            <div class="kDetail"><span>{{wallet.ftotal}}</span>{{wallet.walletName}}</div>
+        </div>
 
-    </div>
-    <div class="detail">交易记录</div>
-</ion-content>
+        <div class="detail">交易记录</div>
+    </ion-content>
+    <ion-footer-bar>
+        <div class="btn bar bar-footer">
+            <button class="button   button-energized ion-arrow-up-a btn1" ng-click="transaction()">转账</button>
+            <button class="button   button-dark ion-arrow-down-a btn2" ng-click="receive()">收款</button>
+        </div>
+    </ion-footer-bar>
+</div>
