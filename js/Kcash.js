@@ -110,7 +110,7 @@ app.config(function ($stateProvider, $urlRouterProvider) {
  * 声明控制器
  */
 .controller('parentCtrl',
-    ['$scope','$state', '$window','$ionicPopup',function ($scope,$state,$window,$ionicPopup) {
+    ['$scope','$state', '$window','$ionicPopup','$interval',function ($scope,$state,$window,$ionicPopup,$interval) {
         //跳转方法
         $scope.jump = function (arg) {
             $state.go(arg);
@@ -155,6 +155,17 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             }
         });
       };
+      //定时
+        $scope.countDown = function () {
+            $scope.secondNumber = 60;
+            $timeout(function(){
+                //$state.go('index');
+            },10000);
+            $interval(function(){
+                if($scope.secondNumber>0)
+                    $scope.secondNumber--;
+            },1000);
+        }
     }])
     //起始页
     .controller('startCtrl',['$scope','$timeout','$interval','$state',
