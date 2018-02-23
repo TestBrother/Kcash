@@ -3,13 +3,13 @@
         <h1 class="title">创建钱包</h1>
     </ion-header-bar>
     <ion-content ng-controller="createWalletCtrl">
-        <div>请输交易密码</div>
+        <div class="tagstylediv">请输交易密码</div>
         <label class="item item-input">
-            <input type="password" ng-model="tradepass">
+            <input type="password" ng-model="tradepass" placeholder="请输交易密码">
         </label>
-        <div>重复交易密码</div>
+        <div class="tagstylediv">重复交易密码</div>
         <label class="item item-input">
-            <input type="password"  ng-model="tradepass2">
+            <input type="password"  ng-model="tradepass2" placeholder="重复交易密码">
         </label>
         <button class="button button-block button-dark" ng-click="createWallet()">
             确定

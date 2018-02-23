@@ -3,7 +3,10 @@
     <h1 class="title">交易详情</h1>
 </ion-header-bar>
 <ion-content ng-controller="detailController">
-    <div style="padding-left: 40%;padding-bottom: 10px; padding-top: 10px;color: green">{{operationDetail.famount}} {{operationDetail.fshortname}}</div>
+    <div style="padding-left: 40%;padding-bottom: 10px; padding-top: 10px;color: green">
+        {{operationDetail.ftype == 1 ? "+"+operationDetail.famount : "-"+operationDetail.famount}}
+        {{operationDetail.fshortname}}
+    </div>
     <ul class="detail">
         <li><p class="HeadDetail">发款方</p><p>{{operationDetail.sendtoaddress}}</p></li>
         <li><p class="HeadDetail">收款方</p><p>{{operationDetail.receiveaddress}}</p></li>

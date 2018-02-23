@@ -61,6 +61,10 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             url:'/createWallet',
             templateUrl:'tpl/create_wallet.html',
         })
+        .state('import_wallet',{
+            url:'/importWallet',
+            templateUrl:'tpl/import_wallet.html',
+        })
           .state('validate_memwords',{
             url:'/validateMemwords',
             templateUrl:'tpl/validate_memwords.html',
@@ -180,9 +184,6 @@ app.config(function ($stateProvider, $urlRouterProvider) {
     //起始页
     .controller('startCtrl',['$scope','$timeout','$interval','$state',
         function ($scope,$timeout,$interval,$state) {
-        $scope.importWallet = function(){
-            $scope.jump("import_wallet");
-        }
     }])
     .controller('mainCtrl',['$scope','$timeout' ,'$http', function ($scope,$timeout,$http) {
           $scope.getWallet = function(){
