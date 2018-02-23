@@ -799,9 +799,10 @@ function copyAddress(objId,textAreaId,msgDiv){
   input.select(); // 选中文本
   document.execCommand("copy"); // 执行浏览器复制命令
   var secondNumber = 3;
+    $("#"+msgDiv).html("复制成功");
+    $("#"+msgDiv).show();
   setTimeout(function () {
-     $("#"+msgDiv).html("复制成功");
-     $("#"+msgDiv).show();
+      $("#"+msgDiv).hide();
   },3000);
   setInterval(function () {
       if(secondNumber>0)
