@@ -9,7 +9,7 @@
 }
 ion-content {
   background: #eee;
-  padding: 10px;
+  /*padding: 10px;*/
 }
 ion-header-bar .header_left {
   padding: 10px;
@@ -39,17 +39,22 @@ ion-header-bar .header_right {
   position: fixed;
   bottom: 0;
   width: 100%;
+  color: #fff;
 }
 .btn .btn1 {
   float: left;
   width: 50%;
+  background: #36BAC7;
 }
 .btn .btn2 {
   width: 50%;
+  background: #036FB7;
 }
 .btn button{
   border-radius: 0px;
   padding: 0px 20%;
+  color: #fff;
+  height: 50px;
 }
 .kDetail span{
   font-size: 22px;
@@ -110,4 +115,59 @@ ion-header-bar .header_right {
 }
 .men_bk{
     background:#a07118;
+}
+/*交易记录列表*/
+.transaction
+{
+  font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+  font-size: 12px;
+  background: #fff;
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+.transaction th
+{
+  font-size: 14px;
+  font-weight: normal;
+  color: #039;
+  padding: 10px 8px;
+  border-bottom: 2px solid #6678b1;
+}
+.transaction td
+{
+  color: #669;
+  padding: 9px 8px 0px 8px;
+}
+.transaction tbody tr {
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+  height: 50px;
+  line-height: 50px;
+}
+
+.transaction tbody tr:hover td
+{
+  color: #009;
+}
+/*交易记录detail详情*/
+.detail,.number{
+  border-top: 1px solid #C9CDD0;
+  margin: 0px 10px;
+}
+.detail .HeadDetail,.number .HeadDetail{
+  color:#C9CDD0;
+  font-size: 14px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-weight: 500;
+  font-family: "-apple-system", "Helvetica Neue", "Roboto", "Segoe UI", sans-serif;
+  line-height: 1.2;
+}
+.QRCode{
+  width: 100px;
+  height: 100px;
+  float: right;
+  position: relative;
+  bottom: 150px;
 }
