@@ -65,6 +65,14 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             url:'/importWallet',
             templateUrl:'tpl/import_wallet.html',
         })
+        .state('deletePurse',{
+            url:'/deletePurse',
+            templateUrl:'purseTool/deletePurse.html',
+        })
+        .state('deletePursebox',{
+            url:'/deletePursebox',
+            templateUrl:'purseTool/deletePursebox.html',
+        })
           .state('validate_memwords',{
             url:'/validateMemwords',
             templateUrl:'tpl/validate_memwords.html',
@@ -272,6 +280,36 @@ app.config(function ($stateProvider, $urlRouterProvider) {
                 }
             })}
         }])
+    .controller('deletePurseController',['$scope','$http', function ($scope,$http) {
+        $scope.deletePursebox = function () {
+            $scope.jump('deletePursebox');
+        }
+    }])
+    .controller('deletePurseboxController',['$scope','$http', function ($scope,$http) {
+        $scope.confirmDeleteWallet = function () {
+            var _menWords = $("#delMemWords").val();
+            if(typeof(_menWords) == "undefined" || _menWords == ""){
+                return $scope.showAlert("助记词不能为空","",false);
+            }
+            _menWords = _menWords.replace(/\s+/g ,",");
+            $http({
+                method:'post',
+                url:url+'/user/deleteWalletByMemWords',
+                data:{token:getCookie(),menWords:_menWords},
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                transformRequest: function (obj) {
+                    return transformRequest(obj);
+                }
+            })
+            .success(function (result) {
+                if(result.status == 200){
+                    return $scope.showAlert("删除成功","start",true);
+                }else{
+                    $scope.checkRequestStatus(result);
+                }
+            })}
+    }])
+
     .controller('validateMemwordsCtrl',['$scope','$http','$rootScope', function ($scope,$http,$rootScope) {
         var memWords = $rootScope.memWords;
         $rootScope.memWords = "";
