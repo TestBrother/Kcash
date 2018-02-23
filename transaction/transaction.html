@@ -1,7 +1,7 @@
 <div  ng-controller="transactionCtrl">
     <ion-header-bar>
         <i class="icon ion-chevron-left header_left" ng-click="backWard()"></i>
-        <h1 class="title"></h1>
+        <h1 class="title">{{wallet.walletName}}</h1>
     </ion-header-bar>
     <ion-content>
         <div class="text-center cent">
@@ -9,9 +9,11 @@
             <div class="kDetail"><span>{{wallet.ftotal}}</span>{{wallet.walletName}}</div>
         </div>
         <div class="content">
-            <table style="width:100%" border="1" ng-repeat="operation in operationList">
-                <tbody>
-                <tr style="border-bottom: 1px solid #2f2e295c;">
+            <h4>最近交易记录</h4>
+            <table class="transaction" style="width:100%" border="1" >
+
+                <tbody ng-repeat="operation in operationList">
+                <tr>
                     <td>{{operation.fcreatetime | date:'yyyy-MM-dd HH:mm:ss'}}</td>
                     <td>{{operation.famount}} {{wallet.walletName}}</td>
                     <td>{{operation.fconfirmations}}</td>
@@ -23,8 +25,8 @@
     </ion-content>
     <ion-footer-bar>
         <div class="btn bar bar-footer">
-            <button class="button   button-energized ion-arrow-up-a btn1" ng-click="transaction()">转账</button>
-            <button class="button   button-dark ion-arrow-down-a btn2" ng-click="receive()">收款</button>
+            <button class="button  ion-arrow-up-a btn1" ng-click="transaction()">转账</button>
+            <button class="button  ion-arrow-down-a btn2" ng-click="receive()">收款</button>
         </div>
     </ion-footer-bar>
 </div>
