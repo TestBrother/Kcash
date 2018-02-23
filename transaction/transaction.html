@@ -13,9 +13,12 @@
             <table class="transaction" style="width:100%" border="1" >
 
                 <tbody ng-repeat="operation in operationList">
-                <tr>
+                <tr ng-click="showDetail({{operation.fid}})">
                     <td>{{operation.fcreatetime | date:'yyyy-MM-dd HH:mm:ss'}}</td>
-                    <td>{{operation.famount}} {{wallet.walletName}}</td>
+                    <td>
+                        {{operation.ftype == 1 ? "+"+operation.famount : "-"+operation.famount}}
+                        {{wallet.walletName}}
+                    </td>
                     <td>{{operation.fconfirmations}}</td>
                 </tr>
                 </tbody>

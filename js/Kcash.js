@@ -45,6 +45,10 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             url:'/myTransaction?symbol',
             templateUrl:'transaction/transaction.html',
         })
+        .state('detail',{
+            url:'/detail?fid',
+            templateUrl:'transaction/detail.html',
+        })
         .state('transactionNext',{
             url:'/transactionNext?symbol',
             templateUrl:'transaction/transactionNext.html',
@@ -56,6 +60,18 @@ app.config(function ($stateProvider, $urlRouterProvider) {
         .state('create_wallet',{
             url:'/createWallet',
             templateUrl:'tpl/create_wallet.html',
+        })
+        .state('import_wallet',{
+            url:'/importWallet',
+            templateUrl:'tpl/import_wallet.html',
+        })
+        .state('deletePurse',{
+            url:'/deletePurse',
+            templateUrl:'purseTool/deletePurse.html',
+        })
+        .state('deletePursebox',{
+            url:'/deletePursebox',
+            templateUrl:'purseTool/deletePursebox.html',
         })
           .state('validate_memwords',{
             url:'/validateMemwords',
@@ -79,7 +95,7 @@ app.config(function ($stateProvider, $urlRouterProvider) {
 
         })
         .state('keyInfo',{
-            url:'/myKeyInfo?symbol&tradePassword',
+            url:'/myKeyInfo?symbol&tradePassword&coinName',
             templateUrl:'purseTool/keyInfo.html'
         })
         .state('exportKey_next',{
@@ -196,9 +212,6 @@ app.config(function ($stateProvider, $urlRouterProvider) {
     //起始页
     .controller('startCtrl',['$scope','$timeout','$interval','$state',
         function ($scope,$timeout,$interval,$state) {
-        $scope.importWallet = function(){
-            $scope.jump("import_wallet");
-        }
     }])
     .controller('mainCtrl',['$scope','$timeout' ,'$http', function ($scope,$timeout,$http) {
           $scope.getWallet = function(){
@@ -287,6 +300,36 @@ app.config(function ($stateProvider, $urlRouterProvider) {
                 }
             })}
         }])
+    .controller('deletePurseController',['$scope','$http', function ($scope,$http) {
+        $scope.deletePursebox = function () {
+            $scope.jump('deletePursebox');
+        }
+    }])
+    .controller('deletePurseboxController',['$scope','$http', function ($scope,$http) {
+        $scope.confirmDeleteWallet = function () {
+            var _menWords = $("#delMemWords").val();
+            if(typeof(_menWords) == "undefined" || _menWords == ""){
+                return $scope.showAlert("助记词不能为空","",false);
+            }
+            _menWords = _menWords.replace(/\s+/g ,",");
+            $http({
+                method:'post',
+                url:url+'/user/deleteWalletByMemWords',
+                data:{token:getCookie(),menWords:_menWords},
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                transformRequest: function (obj) {
+                    return transformRequest(obj);
+                }
+            })
+            .success(function (result) {
+                if(result.status == 200){
+                    return $scope.showAlert("删除成功","start",true);
+                }else{
+                    $scope.checkRequestStatus(result);
+                }
+            })}
+    }])
+
     .controller('validateMemwordsCtrl',['$scope','$http','$rootScope', function ($scope,$http,$rootScope) {
         var memWords = $rootScope.memWords;
         $rootScope.memWords = "";
@@ -487,6 +530,31 @@ app.controller('registerCtrl',
       $scope.receive = function(){
           window.location.href="#/receive?symbol="+ _symbol;
         }
+        $scope.showDetail = function(fid){
+            window.location.href="#/detail?fid="+ fid;
+        }
+    }])
+    .controller('detailController',['$scope','$http','$stateParams', function ($scope,$http,$stateParams) {
+        var _symbol = $stateParams.fid;
+        $scope.getOperateDetail = function(){
+            $http({
+                method:'post',
+                url:url+'/virtualCoin/findCoinOperateDetailById',
+                data:{token:getCookie(),fid:_symbol},
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                transformRequest: function (obj) {
+                    return transformRequest(obj);
+                }})
+                .success(function (result) {
+                    if(result.status == 200){
+                        $scope.operationDetail = result.data;
+                        makeCode("urlQRCode",result.data,104,104);
+                    }else{
+                        $scope.checkRequestStatus(result);
+                    }
+                })
+        }
+        $scope.getOperateDetail();
     }])
     .controller('transactionNextCtrl',['$scope','$http','$stateParams', function ($scope,$http,$stateParams) {
            var _symbol = $stateParams.symbol;
@@ -569,15 +637,15 @@ app.controller('registerCtrl',
                    .success(function (result) {
                       if(result.status == 200){
                          $scope.receive = result.data;
-                         makeCode("qrcodeDiv",result.data);
+                         makeCode("qrcodeDiv",result.data,150,150);
                       }else{
                           $scope.checkRequestStatus(result);
                       }
                   })
               }
               $scope.getRecharge();
-              $scope.copyAddress = function(id,textAreaId,msgDiv){
-                copyAddress(id,textAreaId,msgDiv);
+              $scope.copyAddress = function(textAreaId,msgDiv){
+                copyAddress($scope.receive,textAreaId,msgDiv);
               }
             }])
          .controller('changePasswordCtrl',['$scope','$http','$interval', function ($scope,$http,$interval) {
@@ -714,10 +782,17 @@ app.controller('registerCtrl',
                 .success(function (result) {
                     if(result.status == 200){
                         $scope.wallet = result.data;
+                        $scope.wallet.fshortname = $stateParams.coinName;
                     }
                 })
         }
         $scope.keyInfo();
+        $scope.copyAddress = function(textAreaId,msgDiv){
+            copyAddress($scope.wallet.address,textAreaId,msgDiv);
+        }
+        $scope.copyKey = function(textAreaId,msgDiv){
+            copyAddress($scope.wallet.privkey,textAreaId,msgDiv);
+        }
         //$scope.info = function(symbol){
         //    window.location.href="#/transactionNext?symbol="+ _symbol;
         //}
@@ -802,23 +877,23 @@ function transformRequest(obj){
 }
 
 
-function makeCode (boxId,content) {
+function makeCode (boxId,content,width,height) {
 	new QRCode(document.getElementById(""+boxId), {
-    	width : 150,
-    	height : 150
+    	width : width,
+    	height : height
     }).makeCode(content);
 }
-function copyAddress(objId,textAreaId,msgDiv){
-  var text = $("#"+objId).val();
+function copyAddress(content,textAreaId,msgDiv){
   var input = document.getElementById(""+textAreaId);
-  input.value = text; // 修改文本框的内容
+  input.value = content; // 修改文本框的内容
   input.select(); // 选中文本
   document.execCommand("copy"); // 执行浏览器复制命令
   var secondNumber = 3;
+    $("#"+msgDiv).html("复制成功");
+    $("#"+msgDiv).show();
   setTimeout(function () {
-     $("#"+msgDiv).html("复制成功");
-     $("#"+msgDiv).show();
-  },3000);
+      $("#"+msgDiv).hide();
+  },2000);
   setInterval(function () {
       if(secondNumber>0)
           secondNumber--;
