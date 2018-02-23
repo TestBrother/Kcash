@@ -44,11 +44,9 @@ ion-header-bar .header_right {
 .btn .btn1 {
   float: left;
   width: 50%;
-  background: #36BAC7;
 }
 .btn .btn2 {
   width: 50%;
-  background: #036FB7;
 }
 .btn button{
   border-radius: 0px;

@@ -156,15 +156,21 @@ app.config(function ($stateProvider, $urlRouterProvider) {
         });
       };
       //定时
-        $scope.countDown = function () {
-            $scope.secondNumber = 60;
-            $timeout(function(){
-                //$state.go('index');
-            },10000);
-            $interval(function(){
-                if($scope.secondNumber>0)
-                    $scope.secondNumber--;
-            },1000);
+
+        $scope.settime = function (val) {
+            var countdown=60;
+            if (countdown == 0) {
+                val.removeAttribute("disabled");
+                val.value="免费获取验证码";
+                countdown = 60;
+            } else {
+                val.setAttribute("disabled", true);
+                val.value="重新发送(" + countdown + ")";
+                countdown--;
+            }
+            setTimeout(function() {
+                settime(val)
+            },1000)
         }
     }])
     //起始页
@@ -322,12 +328,15 @@ app.controller('registerCtrl',
                     return str.join("&");
                 }
             })
-                .success(function (data) {
-                    console.log(data);
-                    console.log('验证码'+data.data);
-                    $scope.verifica = data;
+            .success(function (data) {
+                console.log(data);
+                console.log('验证码'+data.data);
+                if(data.status == 200){
+                    console.log('111')
+                    $scope.settime(this);
+                }
 
-                })
+            })
         }
         //注册
 
