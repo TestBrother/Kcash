@@ -87,7 +87,7 @@ app.config(function ($stateProvider, $urlRouterProvider) {
 
         })
         .state('keyInfo',{
-            url:'/myKeyInfo?symbol&tradePassword',
+            url:'/myKeyInfo?symbol&tradePassword&coinName',
             templateUrl:'purseTool/keyInfo.html'
         })
         .state('exportKey_next',{
@@ -596,8 +596,8 @@ app.controller('registerCtrl',
                   })
               }
               $scope.getRecharge();
-              $scope.copyAddress = function(id,textAreaId,msgDiv){
-                copyAddress(id,textAreaId,msgDiv);
+              $scope.copyAddress = function(textAreaId,msgDiv){
+                copyAddress($scope.receive,textAreaId,msgDiv);
               }
             }])
          .controller('changePasswordCtrl',['$scope','$http', function ($scope,$http) {
@@ -728,10 +728,17 @@ app.controller('registerCtrl',
                 .success(function (result) {
                     if(result.status == 200){
                         $scope.wallet = result.data;
+                        $scope.wallet.fshortname = $stateParams.coinName;
                     }
                 })
         }
         $scope.keyInfo();
+        $scope.copyAddress = function(textAreaId,msgDiv){
+            copyAddress($scope.wallet.address,textAreaId,msgDiv);
+        }
+        $scope.copyKey = function(textAreaId,msgDiv){
+            copyAddress($scope.wallet.privkey,textAreaId,msgDiv);
+        }
         //$scope.info = function(symbol){
         //    window.location.href="#/transactionNext?symbol="+ _symbol;
         //}
@@ -822,10 +829,9 @@ function makeCode (boxId,content,width,height) {
     	height : height
     }).makeCode(content);
 }
-function copyAddress(objId,textAreaId,msgDiv){
-  var text = $("#"+objId).val();
+function copyAddress(content,textAreaId,msgDiv){
   var input = document.getElementById(""+textAreaId);
-  input.value = text; // 修改文本框的内容
+  input.value = content; // 修改文本框的内容
   input.select(); // 选中文本
   document.execCommand("copy"); // 执行浏览器复制命令
   var secondNumber = 3;
@@ -833,7 +839,7 @@ function copyAddress(objId,textAreaId,msgDiv){
     $("#"+msgDiv).show();
   setTimeout(function () {
       $("#"+msgDiv).hide();
-  },3000);
+  },2000);
   setInterval(function () {
       if(secondNumber>0)
           secondNumber--;
