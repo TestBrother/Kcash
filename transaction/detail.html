@@ -1,40 +1,19 @@
-<!DOCTYPE html>
-<html ng-app="myApp">
-<head lang="en">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"/>
-    <link rel="stylesheet" href="../css/ionic.css"/>
-    <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css"/>
-    <link rel="stylesheet" href="../css/kcash.css"/>
-    <title>菜单</title>
-    <script src="../js/ionic.bundle.js"></script>
-</head>
-<body>
-<!--<div class="header">菜单-->
-<!--<p class="user">用户头像</p>-->
-<!--</div>-->
 <ion-header-bar>
-    <i class="icon ion-chevron-left header_left"></i>
-    <h1 class="title">菜单</h1>
-    <a class="button ion-android-contact"></a>
+    <i class="icon ion-chevron-left header_left" ng-click="backWard()"></i>
+    <h1 class="title">交易详情</h1>
 </ion-header-bar>
-<ion-content>
-    <div>12344</div>
+<ion-content ng-controller="detailController">
+    <div style="padding-left: 40%;padding-bottom: 10px; padding-top: 10px;color: green">{{operationDetail.famount}} {{operationDetail.fshortname}}</div>
     <ul class="detail">
-        <li><p class="HeadDetail">收款方</p><p>0x58ceabc2153323fddddddeeeeee</p></li>
-        <li><p class="HeadDetail">发款方</p><p>0x58ceabc2153323fddddddeeeeee</p></li>
-        <li><p class="HeadDetail">矿工费用</p><p>1243223</p></li>
-        <li><p class="HeadDetail">备注</p><p>非常好</p></li>
+        <li><p class="HeadDetail">发款方</p><p>{{operationDetail.sendtoaddress}}</p></li>
+        <li><p class="HeadDetail">收款方</p><p>{{operationDetail.receiveaddress}}</p></li>
+        <li><p class="HeadDetail">矿工费用</p><p>{{operationDetail.ffees}}</p></li>
+        <!--<li><p class="HeadDetail">备注</p><p>非常好</p></li>-->
     </ul>
     <ul class="number">
-        <li><p class="HeadDetail">交易号:</p><p>0x58ceabc2153323fddddd</p></li>
-        <li><p class="HeadDetail">区块:</p><p>324546</p></li>
-        <li><p class="HeadDetail">交易时间:</p><p>09/01/02</p></li>
-        <li class="QRCode"><img src="../images/QRCode.png" alt=""/><input type="button" value="复制URL"/></li>
+        <li><p class="HeadDetail">交易号:</p><a style="text-decoration:none" href="{{operationDetail.findTradeDetailUrl}}"><p>{{operationDetail.tradeuniquenumber}}</p></a></li>
+        <li><p class="HeadDetail">区块:</p><p>{{operationDetail.blocknumber}}</p></li>
+        <li><p class="HeadDetail">交易时间:</p><p>{{operationDetail.fcreatetime | date:'yyyy-MM-dd HH:mm:ss'}}</p></li>
+        <li class="QRCode"  ><div style="padding-top:18px"  id="urlQRCode"></div></li>
     </ul>
 </ion-content>
-<script>
-    var app = angular.module('myApp', ['ionic']);
-</script>
-</body>
-</html>

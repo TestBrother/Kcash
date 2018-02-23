@@ -162,8 +162,8 @@ ion-header-bar .header_right {
   line-height: 1.2;
 }
 .QRCode{
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 120px;
   float: right;
   position: relative;
   bottom: 150px;

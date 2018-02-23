@@ -45,6 +45,10 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             url:'/myTransaction?symbol',
             templateUrl:'transaction/transaction.html',
         })
+        .state('detail',{
+            url:'/detail?fid',
+            templateUrl:'transaction/detail.html',
+        })
         .state('transactionNext',{
             url:'/transactionNext?symbol',
             templateUrl:'transaction/transactionNext.html',
@@ -477,6 +481,31 @@ app.controller('registerCtrl',
       $scope.receive = function(){
           window.location.href="#/receive?symbol="+ _symbol;
         }
+        $scope.showDetail = function(fid){
+            window.location.href="#/detail?fid="+ fid;
+        }
+    }])
+    .controller('detailController',['$scope','$http','$stateParams', function ($scope,$http,$stateParams) {
+        var _symbol = $stateParams.fid;
+        $scope.getOperateDetail = function(){
+            $http({
+                method:'post',
+                url:url+'/virtualCoin/findCoinOperateDetailById',
+                data:{token:getCookie(),fid:_symbol},
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                transformRequest: function (obj) {
+                    return transformRequest(obj);
+                }})
+                .success(function (result) {
+                    if(result.status == 200){
+                        $scope.operationDetail = result.data;
+                        makeCode("urlQRCode",result.data,104,104);
+                    }else{
+                        $scope.checkRequestStatus(result);
+                    }
+                })
+        }
+        $scope.getOperateDetail();
     }])
     .controller('transactionNextCtrl',['$scope','$http','$stateParams', function ($scope,$http,$stateParams) {
            var _symbol = $stateParams.symbol;
@@ -559,7 +588,7 @@ app.controller('registerCtrl',
                    .success(function (result) {
                       if(result.status == 200){
                          $scope.receive = result.data;
-                         makeCode("qrcodeDiv",result.data);
+                         makeCode("qrcodeDiv",result.data,150,150);
                       }else{
                           $scope.checkRequestStatus(result);
                       }
@@ -786,10 +815,10 @@ function transformRequest(obj){
 }
 
 
-function makeCode (boxId,content) {
+function makeCode (boxId,content,width,height) {
 	new QRCode(document.getElementById(""+boxId), {
-    	width : 150,
-    	height : 150
+    	width : width,
+    	height : height
     }).makeCode(content);
 }
 function copyAddress(objId,textAreaId,msgDiv){
