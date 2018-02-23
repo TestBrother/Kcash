@@ -110,7 +110,7 @@ app.config(function ($stateProvider, $urlRouterProvider) {
  * 声明控制器
  */
 .controller('parentCtrl',
-    ['$scope','$state', '$window','$ionicPopup','$interval',function ($scope,$state,$window,$ionicPopup,$interval) {
+    ['$scope','$http','$state', '$window','$ionicPopup','$interval',function ($scope,$http,$state,$window,$ionicPopup,$interval) {
         //跳转方法
         $scope.jump = function (arg) {
             $state.go(arg);
@@ -156,22 +156,42 @@ app.config(function ($stateProvider, $urlRouterProvider) {
         });
       };
       //定时
-
-        $scope.settime = function (val) {
-            var countdown=60;
-            if (countdown == 0) {
-                val.removeAttribute("disabled");
-                val.value="免费获取验证码";
-                countdown = 60;
-            } else {
-                val.setAttribute("disabled", true);
-                val.value="重新发送(" + countdown + ")";
-                countdown--;
+    $scope.canClick=false;
+    $scope.description = "获取验证码";
+    var second=59;
+    var timerHandler;
+    $scope.getTestCode = function(){
+        timerHandler =$interval(function(){
+            if(second<=0){
+                $interval.cancel(timerHandler);    //当执行的时间59s,结束时，取消定时器 ，cancle方法取消
+                second=59;
+                $scope.description="获取验证码";
+                $scope.canClick=false;    //因为 ng-disabled属于布尔值，设置按钮可以点击，可点击发送
+            }else{
+                $scope.description=second+"s后重发";
+                second--;
+                $scope.canClick=true;
             }
-            setTimeout(function() {
-                settime(val)
-            },1000)
-        }
+        },1000)   //每一秒执行一次$interval定时器方法
+    };
+    //验证码
+    //$scope.verification = function () {
+    //    $http({
+    //        method: 'post',
+    //        url: url+'/user/authCode',
+    //        data: {phone:$scope.phone},
+    //        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+    //        transformRequest: function (obj) {
+    //            return transformRequest(obj);
+    //        }
+    //    })
+    //        .success(function (data) {
+    //            console.log(data);
+    //            console.log('验证码'+data.data);
+    //        });
+    //    $scope.getTestCode();
+    //}
+
     }])
     //起始页
     .controller('startCtrl',['$scope','$timeout','$interval','$state',
@@ -312,7 +332,7 @@ app.config(function ($stateProvider, $urlRouterProvider) {
         }])
     //注册
 app.controller('registerCtrl',
-    ['$scope','$http', function ($scope,$http) {
+    ['$scope','$http','$interval', function ($scope,$http,$interval) {
         //验证码
         $scope.verification = function () {
             $http({
@@ -321,22 +341,14 @@ app.controller('registerCtrl',
                 data: {phone:$scope.phone},
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                 transformRequest: function (obj) {
-                    var str = [];
-                    for (var p in obj) {
-                        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-                    }
-                    return str.join("&");
+                    return transformRequest(obj);
                 }
             })
             .success(function (data) {
                 console.log(data);
                 console.log('验证码'+data.data);
-                if(data.status == 200){
-                    console.log('111')
-                    $scope.settime(this);
-                }
-
-            })
+            });
+            $scope.getTestCode();
         }
         //注册
 
@@ -347,12 +359,9 @@ app.controller('registerCtrl',
                 data:{floginName:$scope.phone,floginPassword:$scope.floginPassword,authCode:$scope.authCode},
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                 transformRequest: function (obj) {
-                    var str = [];
-                    for (var p in obj) {
-                        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-                    }
-                    return str.join("&");
+                    return transformRequest(obj);
                 }
+
             })
                 .success(function (result) {
                     console.log(result);
@@ -375,6 +384,7 @@ app.controller('registerCtrl',
                     if(result.status == 200){
                         setCookie('user_token',result.data,7);
                         $scope.jump("main");
+                        console.log('success')
                     }else{
                         checkRequestStatus(result);
                     }
@@ -570,7 +580,7 @@ app.controller('registerCtrl',
                 copyAddress(id,textAreaId,msgDiv);
               }
             }])
-         .controller('changePasswordCtrl',['$scope','$http', function ($scope,$http) {
+         .controller('changePasswordCtrl',['$scope','$http','$interval', function ($scope,$http,$interval) {
                 //验证码
                 $scope.verification = function () {
                     $http({
@@ -582,6 +592,11 @@ app.controller('registerCtrl',
                             return transformRequest(obj);
                         }
                     })
+                    .success(function (data) {
+                        console.log(data);
+                        console.log('验证码'+data.data);
+                    });
+                    $scope.getTestCode();
             }
             $scope.changePassword = function () {
                 $http({
@@ -602,7 +617,7 @@ app.controller('registerCtrl',
             }
         }])
 
-    .controller('resetPasswordCtrl',['$scope','$http', function ($scope,$http) {
+    .controller('resetPasswordCtrl',['$scope','$http','$interval', function ($scope,$http,$interval) {
         $scope.verification = function () {
             $http({
                 method: 'post',
@@ -613,12 +628,13 @@ app.controller('registerCtrl',
                     return transformRequest(obj);
                 }
             })
-                .success(function (data) {
-                    console.log(data);
-                    console.log('验证码'+data.data);
-                    $scope.verifica = data;
+            .success(function (data) {
+                console.log(data);
+                console.log('验证码'+data.data);
+                $scope.verifica = data;
 
-                })
+            });
+            $scope.getTestCode();
         }
         $scope.resetPassword = function () {
             $http({
