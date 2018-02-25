@@ -7,6 +7,9 @@
 .inlineblock{
   display: inline-block;
 }
+.backf{
+  background: #fff;
+}
 ion-content {
   background: #eee;
   /*padding: 10px;*/
