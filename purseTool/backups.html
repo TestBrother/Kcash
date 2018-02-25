@@ -1,13 +1,13 @@
 <ion-header-bar class="purseTool">
     <i class="icon ion-chevron-left header_left" ng-click="backWard()"></i>
-    <h1 class="title">导出私钥</h1>
+    <h1 class="title">钱包备份</h1>
 </ion-header-bar>
-<ion-content ng-controller="exportKeyCtrl">
-    <div>请输入交易密码</div>
+<ion-content ng-controller="backups">
+    <div>请输入密码</div>
     <label class="item item-input">
         <input type="password" ng-model="tradePassword">
     </label>
-    <button class="button button-block button-dark" ng-click="exportKey()">
+    <button class="button button-block button-dark" ng-click="backups()">
         确定
     </button>
 </ion-content>
