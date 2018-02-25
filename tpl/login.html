@@ -4,7 +4,7 @@
     </ion-header-bar>
     <ion-content ng-controller="loginCtrl">
         <div class="item item-input-inset">
-            <label class="item-input-wrapper">
+            <label class="backf item-input-wrapper">
                 <span>+86</span>
                 <input type="text" placeholder="请输入手机号码" ng-model="floginName">
             </label>
@@ -12,7 +12,14 @@
         <label class="item item-input">
             <input type="password" placeholder="请输入密码" ng-model="floginPassword">
         </label>
+
         <button class="button button-block button-dark" ng-click="login()">
             登录
         </button>
+        <a style="    float: right; margin-right: 17px;padding: 10px;" ng-click="jump('register')">
+            新用户注册
+        </a>
+        <a style="    float: left; margin-right: 17px;padding: 10px;" ng-click="jump('resetPassword')">
+            忘记密码
+        </a>
     </ion-content>

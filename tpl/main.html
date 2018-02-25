@@ -2,7 +2,7 @@
     <ion-side-menu-content>
         <ion-header-bar class="bar-dark">
             <button class="button icon ion-navicon" menu-toggle="left"></button>
-            <h1 class="title">总资产(BRL) <span>100.00</span></h1>
+            <h1 class="title">资产中心 <span></span></h1>
 
         </ion-header-bar>
         <!--各种币资产列表-->
@@ -23,9 +23,9 @@
     <!-- 左边打开的侧边栏菜单-->
     <ion-side-menu side="left">
         <button menu-close class="button icon ion-close"></button>
-        <a class="rf button ion-android-contact" ng-click="jump('signOut')"></a>
+        <a class="rf button " onclick="signOut()">退出登录</a>
         <div class="list">
-            <a class="item item-icon-left" href="#" >
+            <a class="item item-icon-left" ng-click="jump('backups')">
                 <i class="icon ion-iphone"></i>
                 钱包备份
             </a>
@@ -37,7 +37,7 @@
                 <i class="icon ion-ios-trash-outline"></i>
                 删除钱包
             </a>
-            <a class="item item-icon-left">
+            <a class="item item-icon-left" ng-click="jump('changePassword')">
                 <i class="icon ion-ios-locked-outline"></i>
                 修改密码
             </a>
